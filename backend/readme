@@ -1,1 +1,15 @@
-#backendpython
+#backend 
+how to setup environment( first time)
+cd backend
+python -m venv venv
+pip install -r requirement.txt
+
+
+
+how to run
+cd backend
+runenv
+run
+
+
+
