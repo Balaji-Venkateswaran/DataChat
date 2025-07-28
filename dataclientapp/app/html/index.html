@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../js/index.js"></script>
+  <script src="https://sql.js.org/dist/sql-wasm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <!-- <div id="myBox"></div> -->
+  <input type="file" accept=".csv, .xls, .xlsx, .db" onchange="uploadFile(event)"> 
+
+</body>
+</html>
+
+
+<script>
+  const el = document.getElementById("myBox");  
+  const myBox = new ColorBox(el, {
+    color: "salmon",
+    text: "I am a widget!",
+  });
+
+  // Update it later
+  setTimeout(() => {
+    myBox.update({
+      color: "lightgreen",
+      text: "Updated Widget!",
+    });
+  }, 2000);
+</script>
+
