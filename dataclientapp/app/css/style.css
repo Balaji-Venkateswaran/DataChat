@@ -9,12 +9,14 @@
     --primary-color: #bb86fc;
 }
 
-button {
-  text-align: right;
+.file {
+  padding: 10px;
 }
+
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
+  margin: 0;
 }
 
 a {

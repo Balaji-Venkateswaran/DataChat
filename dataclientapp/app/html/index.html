@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-   <link rel="stylesheet" href="../css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/style.css" />
 
-  <script src="../js/index.js"></script>
-  <script src="../js/package/sql_wasm.js"></script>
-  <script src="../js/package/xlsx.js"></script>
-</head>
-<body>
-  <div id="content"></div>
+    <script src="../js/index.js"></script>
+    <script src="../js/package/sql_wasm.js"></script>
+    <script src="../js/package/xlsx.js"></script>
+  </head>
+  <body>
+    <div id="content"></div>
 
-<!-- <object type="text/html" data="nav.html" ></object>    its have height and width -->
- <!-- <iframe src="nav.html" style="border:none; width:100%; height:100px;"></iframe>   frame inside-->
-<script>
-  fetch('nav.html')
-    .then(response => response.text())
-    .then(html => {
-    document.getElementById('content').innerHTML = html;  
-    document.getElementById("themeToggleBtn")?.addEventListener("click",toggleTheme);
+    <script>
+      fetch("nav.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("content").innerHTML = html;
+          document
+            .getElementById("themeToggleBtn")
+            ?.addEventListener("click", toggleTheme);
 
-    function toggleTheme(){
-      const currentTheme = document.documentElement.getAttribute("data-theme");
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", newTheme);
-    }
-    })
-</script>
-  <input type="file" accept=".csv, .xls, .xlsx, .db" onchange="uploadFile(event)" multiple> 
-</body>
+          function toggleTheme() {
+            const currentTheme =
+              document.documentElement.getAttribute("data-theme");
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", newTheme);
+          }
+        });
+    </script>
+    <div class="file">
+      <input
+        type="file"
+        accept=".csv, .xls, .xlsx, .db"
+        onchange="uploadFile(event)"
+        multiple
+      />
+      <div id="tableOutput" style="padding: 0 30px"></div>
+    </div>
+  </body>
 </html>
-
-
-
