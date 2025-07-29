@@ -1,0 +1,23 @@
+:root{
+    --bg-color: #ffffffff;
+    --text-color: #000000;
+    --primary-color: #1e90ff;
+}
+[data-theme="dark"] {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+    --primary-color: #bb86fc;
+}
+
+button {
+  text-align: right;
+}
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+a {
+  color: var(--primary-color);
+}
+
