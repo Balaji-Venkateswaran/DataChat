@@ -1,27 +1,15 @@
-:root{
-    --bg-color: #ffffffff;
-    --text-color: #000000;
-    --primary-color: #1e90ff;
+h1 {
+  font-size: 24px;
+  color: var(--bg-color);
 }
-[data-theme="dark"] {
-    --bg-color: #121212;
-    --text-color: #ffffff;
-    --primary-color: #bb86fc;
+button {
+  background-color: var(--nav-bg-color);
+  color: var(--bg-color);
 }
-
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-a {
-  color: var(--primary-color);
-}
-
 
 .nav {
-    display: flex;
-    justify-content: space-between;
-    background: #30506c;
-    margin-bottom: 2%;
+  display: flex;
+  justify-content: space-between;
+  background: var(--nav-bg-color);
+  margin-bottom: 2%;
 }

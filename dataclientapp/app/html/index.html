@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,12 +32,29 @@
     </script>
     <div class="file">
       <input
+        class="file-input"
         type="file"
         accept=".csv, .xls, .xlsx, .db"
         onchange="uploadFile(event)"
         multiple
       />
-      <div id="tableOutput" style="padding: 0 30px"></div>
+      <div id="tableOutput" class="table-output" style="padding: 0 30px"></div>
     </div>
+    <div class="text-container">
+    <div class="context">
+      <label>Provide Context about Your DataSet</label>
+      <br />
+      <textarea class="input" id="context" placeholder="Enter context here..."></textarea>
+    </div>
+    <div class="question">
+      <label>Ask a question about your DataSet </label>
+      <br />
+      <textarea class="field-input" id="question" placeholder="Enter your question here..."></textarea>
+    </div>
+   
+  </div>
+  <div> <button class="submit-button" onclick="submitQuestion()">
+      Submit</button></div>
+    
   </body>
 </html>

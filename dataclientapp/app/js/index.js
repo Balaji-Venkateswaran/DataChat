@@ -1,9 +1,10 @@
 let tableStructure = [];
-
+var selectedFile = null;
 function uploadFile(event) {
   tableStructure = [];
   for (let i = 0; i < event.target.files.length; i++) {
     const file = event.target.files[i];
+    selectedFile = file;
     const fileNameArr = file.name;
     const fileNameExtacter = fileNameArr.split(".");
     const fileName = fileNameExtacter[fileNameExtacter.length - 1];
@@ -52,9 +53,9 @@ function extractDBfile(file) {
             tempArr.tableInfo.push({
               Column: name,
               Type: type,
-              Default: !dflt_value ? 'NA' : dflt_value,
-              PK: pk == '1' ? pk : "NA",
-              Not_Null: !notnull ? 'NA' : notnull,
+              Default: !dflt_value ? 'Null' : dflt_value,
+              PK: pk == '1' ? pk : "NO",
+              Not_Null: !notnull ? 'NO' : notnull,
             });
             console.log(
               `  Column: ${name}, Type: ${type}, Not Null: ${notnull}, Default: ${dflt_value}, PK: ${pk}`
@@ -100,9 +101,9 @@ function extractXlsxFile(e) {
       const schema = headers.map((col, i) => ({
         column: col,
         type: inferredTypes[i],
-        Default: "NA",
-        PK: "NA",
-        Not_Null: "NA",
+        Default: "Null",
+        PK: "NO",
+        Not_Null: "NO",
       }));
       tempArr.tableInfo.push(...schema);
       tableStructure.push(tempArr);
@@ -114,7 +115,7 @@ function extractXlsxFile(e) {
 }
 function exportToCSV(tableName) {
  
-  var pom = document.createElement("a");
+  var exportLink = document.createElement("a");
   var csvContent = tableStructure
     .filter((table) => table.tableNames === tableName)
     .map((table) => {
@@ -129,54 +130,62 @@ function exportToCSV(tableName) {
     console.log("csvContent", csvContent);
   var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   var url = URL.createObjectURL(blob);
-  pom.href = url;
-  pom.setAttribute("download", `${tableName}-${Date.now()}.csv`);
-  pom.click();
+  exportLink.href = url;
+  exportLink.setAttribute("download", `${tableName}-${Date.now()}.csv`);
+  exportLink.click();
 }
 
 function displayTableStructure() {
   const outputDiv = document.getElementById("tableOutput");
   outputDiv.innerHTML = "";
+
   tableStructure.forEach((table) => {
+    const containerDiv = document.createElement("div");
+    containerDiv.classList.add("container-box");
+    // containerDiv.style.border = "1px solid #ccc";
+    containerDiv.style.padding = "10px";
+    containerDiv.style.marginBottom = "20px";
+
     const title = document.createElement("h3");
-    const exportBtn =  document.createElement("button");
+    title.textContent = `Table: ${table.tableNames}`;
+
+    const exportBtn = document.createElement("button");
     exportBtn.textContent = "Export";
     exportBtn.classList.add("export-button");
-    exportBtn.addEventListener("click", function() {
-    // Your export logic here
-      exportToCSV(table.tableNames)
-        console.log("Export button clicked");
+
+    exportBtn.addEventListener("click", function () {
+      exportToCSV(table.tableNames);
     });
-    title.textContent = `Table: ${table.tableNames}`;
-    outputDiv.appendChild(title);
-    outputDiv.appendChild(exportBtn);
 
+    // Add title and button to container
+    const headerRow = document.createElement("div");
+    headerRow.style.display = "flex";
+    headerRow.style.justifyContent = "space-between";
+    headerRow.style.alignItems = "center";
+    headerRow.appendChild(title);
+    headerRow.appendChild(exportBtn);
+    containerDiv.appendChild(headerRow);
+
+    // Create table
     const htmlTable = document.createElement("table");
-    htmlTable.style.margin = "0 auto"; 
-    htmlTable.border = "1";
-    htmlTable.style.marginBottom = "20px";
-    htmlTable.style.borderCollapse = "collapse";
+    htmlTable.style.marginTop = "10px";
     htmlTable.style.width = "100%";
-
+    htmlTable.style.borderCollapse = "collapse";
+    htmlTable.border = "1";
 
     const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-
-    const columns = Array.isArray(table.tableInfo[0])
-      ? table.tableInfo[0]
-      : table.tableInfo;
-
-    Object.keys(columns[0]).forEach((key) => {
+    const header = document.createElement("tr");
+    Object.keys(table.tableInfo[0]).forEach((key) => {
       const th = document.createElement("th");
       th.textContent = key;
       th.style.padding = "6px";
-      headerRow.appendChild(th);
+      header.appendChild(th);
     });
-    thead.appendChild(headerRow);
+    thead.appendChild(header);
     htmlTable.appendChild(thead);
 
     const tbody = document.createElement("tbody");
-    columns.forEach((row) => {
+    table.tableInfo.forEach((row) => {
       const tr = document.createElement("tr");
       Object.values(row).forEach((val) => {
         const td = document.createElement("td");
@@ -188,22 +197,28 @@ function displayTableStructure() {
     });
 
     htmlTable.appendChild(tbody);
-    outputDiv.appendChild(htmlTable);
+    containerDiv.appendChild(htmlTable);
+
+    // Append container to output
+    outputDiv.appendChild(containerDiv);
   });
+
+
 }
 
-// unused code
-// const file = event.target.files[0];
-// const fileNameArr = file.name;
-// const fileNameExtacter = fileNameArr.split('.')
-// const fileName = fileNameExtacter[fileNameExtacter.length-1];
-// console.log("Uploaded File:", file,fileName);
-// switch(fileName){
-//   case 'db':
-//     extractDBfile(file);
-//   break;
-//   case 'xlsx':
-//   case 'xls' :
-//     extractXlsxFile(file);
-//   break;
-// }
+function submitQuestion(){
+  const questionInput = document.getElementById("question");
+  const contextInput = document.getElementById("context");
+  console.log("questionInput", questionInput.value,contextInput.value,selectedFile);
+  const res = fetch("http://localhost:5000/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      question: questionInput.value,
+      context: contextInput.value,
+      selectedFile:selectedFile
+    })
+  });
+}
