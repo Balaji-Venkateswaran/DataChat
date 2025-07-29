@@ -53,9 +53,9 @@ function extractDBfile(file) {
             tempArr.tableInfo.push({
               Column: name,
               Type: type,
-              Default: !dflt_value ? 'Null' : dflt_value,
-              PK: pk == '1' ? pk : "NO",
-              Not_Null: !notnull ? 'NO' : notnull,
+              Default: !dflt_value ? "Null" : dflt_value,
+              PK: pk == "1" ? pk : "NO",
+              Not_Null: !notnull ? "NO" : notnull,
             });
             console.log(
               `  Column: ${name}, Type: ${type}, Not Null: ${notnull}, Default: ${dflt_value}, PK: ${pk}`
@@ -114,12 +114,11 @@ function extractXlsxFile(e) {
   reader.readAsArrayBuffer(e);
 }
 function exportToCSV(tableName) {
- 
   var exportLink = document.createElement("a");
   var csvContent = tableStructure
     .filter((table) => table.tableNames === tableName)
     .map((table) => {
-      console.log("table", table,table.tableInfo[0]);
+      console.log("table", table, table.tableInfo[0]);
       const headers = Object.keys(table.tableInfo[0]);
       const rows = table.tableInfo.map((row) =>
         headers.map((header) => row[header]).join(",")
@@ -127,7 +126,7 @@ function exportToCSV(tableName) {
       return [headers.join(","), ...rows].join("\n");
     })
     .join("\n\n");
-    console.log("csvContent", csvContent);
+  console.log("csvContent", csvContent);
   var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   var url = URL.createObjectURL(blob);
   exportLink.href = url;
@@ -202,23 +201,38 @@ function displayTableStructure() {
     // Append container to output
     outputDiv.appendChild(containerDiv);
   });
-
-
 }
 
-function submitQuestion(){
+async function submitQuestion() {
   const questionInput = document.getElementById("question");
   const contextInput = document.getElementById("context");
-  console.log("questionInput", questionInput.value,contextInput.value,selectedFile);
-  const res = fetch("http://localhost:5000/ask", {
+  var resultDiv = document.getElementById("result");
+  console.log(
+    "questionInput",
+    questionInput.value,
+    contextInput.value,
+    selectedFile
+  );
+  // const res = fetch("http://localhost:8000/api/message/").then((res) => {
+  //   return res.json()
+  // }).then((output) => {
+  //   console.log(output)
+  // })
+
+  const res = await fetch("http://localhost:8000/api/sql-query/", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      question: questionInput.value,
-      context: contextInput.value,
-      selectedFile:selectedFile
-    })
+      question: "top 1 rrecord",
+    }),
   });
+
+  if (res.status === 200) {
+    const data = await res.json();
+    console.log(data?.table_html);
+    resultDiv.innerHTML = data?.table_html;
+    // document.getElementById('resultDiv').innerHTML = data?.table_html || "<p>No data</p>";
+  }
 }
