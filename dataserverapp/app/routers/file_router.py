@@ -1,6 +1,6 @@
-from fastapi import APIRouter, UploadFile, File
-from app.services.file_service import save_upload_file
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
+from app.services.file_service import save_upload_file,save_upload_file_and_store
 
 upload_router = APIRouter()
 
@@ -12,3 +12,13 @@ async def upload_file(file: UploadFile = File(...)):
         "filename": file.filename,
         "saved_to": file_path
     })
+
+@upload_router.post("/upload-and-store")
+async def upload_and_store_file(file: UploadFile = File(...)):
+    try:
+        result = await save_upload_file_and_store(file)
+        return JSONResponse(content=result)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
