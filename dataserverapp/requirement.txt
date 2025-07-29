@@ -10,3 +10,7 @@ python-dotenv
 dnspython 
 langgraph
 python-multipart
+certifi
+supabase
+dnspython 
+google.generativeai
