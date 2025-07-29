@@ -1,6 +1,7 @@
 from fastapi import  FastAPI
 from fastapi.middleware.cors import  CORSMiddleware
 from app.routers import message
+from app.routers import file_router
 
 app= FastAPI(
 title="API",
@@ -20,6 +21,7 @@ app.add_middleware(
 
 # Include router
 app.include_router(message.router, prefix="/api")
+app.include_router(file_router.upload_router, prefix="/api")
 
 # @app.get("/api/message")
 # def get_massage():
