@@ -92,7 +92,8 @@ async def generate_sql_and_table(user_question: str):
         if not result.data:
             return {"generated_sql": sql_query, "table_html": "<p>No data found</p>"}
         df = pd.DataFrame(result.data)
-        table_html = df.to_html(index=False, classes="table table-bordered table-sm")
+        styled_table = df.to_html(index=False, classes="result-custom-table")
+        table_html = f'<div class="result-table-container">{styled_table}</div>'        
         return {
             "generated_sql": sql_query,
             "table_html": table_html

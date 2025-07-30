@@ -44,3 +44,4 @@ dist/
 .ipynb_checkpoints/
 #ignore uploads
 uploads/
+dataserverapp/.env
