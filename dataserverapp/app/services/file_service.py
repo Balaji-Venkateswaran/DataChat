@@ -69,7 +69,6 @@ async def save_upload_file_and_store(file: UploadFile):
     if file_ext not in allowed_exts:
         raise HTTPException(status_code=400, detail=f"Only {allowed_exts} files are supported.")
 
-    # Save file to disk
     file.file.seek(0)
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     with open(file_path, "wb") as buffer:
@@ -90,14 +89,12 @@ async def save_upload_file_and_store(file: UploadFile):
     # Extract columns and full content
     columns = ",".join(df.columns)
     text_content = df.to_string(index=False)
-
-    # Generate embedding (limit text to 8192 characters)
+    
     try:
         vector = embedding.embed_query(text_content[:8192])
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Embedding failed: {e}")
-
-    # Insert into Supabase
+    
     insert_data = {
         "id": str(uuid4()),
         "filename": file.filename,
