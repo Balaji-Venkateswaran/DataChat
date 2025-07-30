@@ -36,27 +36,44 @@
         type="file"
         accept=".csv, .xls, .xlsx, .db"
         onchange="uploadFile(event)"
-        multiple=false
+        multiple="false"
       />
       <div id="tableOutput" class="table-output" style="padding: 0 30px"></div>
     </div>
     <div class="text-container">
-    <div class="context">
-      <label>Provide Context about Your DataSet</label>
-      <br />
-      <textarea class="input" id="context" placeholder="Enter context here..."></textarea>
+      <div class="context">
+        <label>Provide Context about Your DataSet</label>
+        <br />
+        <textarea
+          class="input"
+          id="context"
+          placeholder="Enter context here..."
+        ></textarea>
+      </div>
+      <div class="question">
+        <label>Ask a question about your DataSet </label>
+        <br />
+        <textarea
+          class="field-input"
+          id="question"
+          placeholder="Enter your question here..."
+        ></textarea>
+      </div>
     </div>
-    <div class="question">
-      <label>Ask a question about your DataSet </label>
-      <br />
-      <textarea class="field-input" id="question" placeholder="Enter your question here..."></textarea>
+    <div>
+      <button class="submit-button" onclick="submitQuestion()">Submit</button>
     </div>
-   
-  </div>
-  <div> <button class="submit-button" onclick="submitQuestion()">
-      Submit</button></div>
-    <br/>  
-     <div id="result-table"></div> 
-     <span>Generated Query:</span><div id="result-query"></div>
-  </body>   
+    <br />
+    <!-- <div>
+      <button class="export-button" onclick="">Export</button>
+    </div> -->
+    <div
+      id="result-table"
+      class="table-output"
+      style="padding: 40px 40px"
+    ></div>
+
+    <span>Generated Query:</span>
+    <div id="result-query"></div>
+  </body>
 </html>
