@@ -1,11 +1,11 @@
 # service.py
 
+import os
 from fastapi import HTTPException
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 import pandas as pd
-import os
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain.vectorstores.supabase import SupabaseVectorStore
 from dotenv import load_dotenv
@@ -41,7 +41,6 @@ supabase_vector_store = SupabaseVectorStore(
     query_name=SUPABASE_FUNCTION_NAME
 )
 output_parser = StrOutputParser()
-# SQL Prompt Template
 sql_prompt_template = PromptTemplate.from_template("""
         You are an expert SQL generator. Given a question and the following table schema:
 
@@ -64,10 +63,6 @@ sql_prompt_template = PromptTemplate.from_template("""
 
         SQL:
 """)
-
-
-
-# Generate SQL + Fetch Data
 async def generate_sql_and_table(user_question: str):
     user_question = sanitize_question(user_question)
     try:
@@ -80,43 +75,33 @@ async def generate_sql_and_table(user_question: str):
                 embedding VECTOR(1536),
                 created_at TIMESTAMP
             )
-            """
-        # Prompt LLM
-        prompt = sql_prompt_template.format(schema=schema, question=user_question)
-        #response = llm.invoke(prompt)
-        # Run LLM chain
+            """    
+        prompt = sql_prompt_template.format(schema=schema, question=user_question) 
         chain = sql_prompt_template | llm | output_parser
-        response = chain.invoke({"schema": schema, "question": user_question})
-        
+        response = chain.invoke({"schema": schema, "question": user_question})        
         # sql_query =response.content.strip("`").strip() #type:ignore
         print(f"result is :{response}")
         sql_query = clean_sql_output(response)
-        print(f"sql_query :{sql_query}")
-            #return {"generated_sql": sql_query, "table_html": "<p>No data found</p>"}
+        print(f"sql_query :{sql_query}")        
         if not sql_query.lower().startswith(("select", "insert", "update", "delete")):
            raise HTTPException(status_code=400, detail="Invalid or unsupported SQL operation.")
-        print(f"{sql_query}")
-        # Call Supabase SQL Function   
+        print(f"{sql_query}")       
         sql_query= re.sub(r"\bLIKE\b", "ILIKE", sql_query, flags=re.IGNORECASE)     
         result = supabase_client.rpc("run_sql_query", {"sql_text": sql_query}).execute()
         print(f"result is {result}")
         if not result.data:
             return {"generated_sql": sql_query, "table_html": "<p>No data found</p>"}
-
         df = pd.DataFrame(result.data)
         table_html = df.to_html(index=False, classes="table table-bordered table-sm")
-
         return {
             "generated_sql": sql_query,
             "table_html": table_html
         }
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM/SQL error: {str(e)}")
     
     
-def clean_sql_output(text: str) -> str:
-    # Remove ```sql or ``` and any extra formatting
+def clean_sql_output(text: str) -> str:   
     text = re.sub(r"```sql", "", text, flags=re.IGNORECASE)
     text = re.sub(r"```", "", text)
     return text.strip()

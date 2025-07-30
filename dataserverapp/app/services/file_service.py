@@ -9,11 +9,8 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from supabase import create_client, Client
 from langchain.vectorstores.supabase import SupabaseVectorStore
 
-# Setup upload directory
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-# Initialize Supabase client
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
 load_dotenv(dotenv_path=env_path)
 
@@ -37,8 +34,8 @@ supabase_client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 supabase_vector_store = SupabaseVectorStore(
     embedding=embedding,
     client=supabase_client,
-    table_name=SUPABASE_TABLENAME,  # Replace with your table name
-    query_name="match_file_documents" # Replace with your Supabase function name if custom
+    table_name=SUPABASE_TABLENAME,  
+    query_name="match_file_documents"
 )
 #./
 
