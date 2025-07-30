@@ -11,6 +11,9 @@ from langchain.vectorstores.supabase import SupabaseVectorStore
 from dotenv import load_dotenv
 from supabase import create_client, Client
 import re
+import csv
+import io
+from fastapi.responses import StreamingResponse
 
 # Load .env
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
@@ -109,3 +112,109 @@ def clean_sql_output(text: str) -> str:
 
 def sanitize_question(q: str) -> str:
     return q.replace("'", "").replace("`", "").strip()
+
+
+# /. query by context
+
+prompt_template = PromptTemplate.from_template("""
+You are a SQL generator assistant. Generate a safe and minimal SELECT SQL query for the question below. 
+Use only the columns and table described in the schema. Consider the user context as background knowledge.
+
+Schema:
+{schema}
+
+Context (background information from the user, may help constrain or guide the query):
+{context}
+
+Question (natural language question to convert to SQL):
+{question}
+
+Only return a valid SQL SELECT statement without explanation.
+""")
+
+# 🔁 Updated function name and logic
+async def generate_sql_and_table_bycontext(user_context: str, user_question: str):
+    user_question = sanitize_question(user_question)
+
+    try:
+        schema = """
+            file_documents(
+                id UUID,
+                filename TEXT,
+                filepath TEXT,
+                filetype TEXT,
+                columns TEXT,
+                uploaded_at TIMESTAMP,
+                content_text TEXT,
+                embedding VECTOR(1536),
+                created_at TIMESTAMP
+            )
+        """
+
+        # prompt = prompt_template.format(
+        #     schema=schema.strip(),
+        #     context=(user_context or "").strip(),
+        #     question=user_question.strip()
+        # )
+
+        # ✅ Use proper chaining with LangChain
+        chain = prompt_template | llm | output_parser
+        response = chain.invoke({
+            "schema": schema.strip(),
+            "context": (user_context or "").strip(),
+            "question": user_question.strip()
+        })
+
+        sql_query = clean_sql_output(response).strip()
+
+        if not sql_query.lower().startswith("select"):
+            raise HTTPException(status_code=400, detail="Only SELECT queries are allowed.")
+
+        sql_query = re.sub(r"\bLIKE\b", "ILIKE", sql_query, flags=re.IGNORECASE)
+        print(f"Generated SQL: {sql_query}")
+        sql_query = sql_query.replace('\n', ' ')
+        result = supabase_client.rpc("run_sql_query_context", {"sql_text": sql_query}).execute()
+
+        if not result.data:
+            return {
+                "generated_sql": sql_query,
+                "table_html": "<p>No matching records found.</p>"
+            }
+
+        df = pd.DataFrame(result.data)
+        table_html = df.to_html(index=False, classes="result-custom-table")
+
+        return {
+            "generated_sql": sql_query,
+            "table_html": f'<div class="result-table-container">{table_html}</div>'
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+# ./ query by context
+
+#/.download 
+
+def download_query_results(sql_query: str):
+    try:
+        result = supabase_client.rpc("run_sql_query_context", {"sql_text": sql_query}).execute()
+        rows = result.data
+
+        if not rows:
+            return None
+
+        output = io.StringIO()
+        writer = csv.DictWriter(output, fieldnames=rows[0].keys())
+        writer.writeheader()
+        writer.writerows(rows)
+        output.seek(0)
+
+        return StreamingResponse(
+            output,
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=results.csv"}
+        )
+
+    except Exception as e:
+        raise Exception(f"Error downloading results: {str(e)}")
+#./ download 
