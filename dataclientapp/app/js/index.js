@@ -206,7 +206,8 @@ function displayTableStructure() {
 async function submitQuestion() {
   const questionInput = document.getElementById("question");
   const contextInput = document.getElementById("context");
-  var resultDiv = document.getElementById("result");
+  var resultTableDiv = document.getElementById("result-table");
+  var resultQueryDiv = document.getElementById("result-query");
   console.log(
     "questionInput",
     questionInput.value,
@@ -232,7 +233,8 @@ async function submitQuestion() {
   if (res.status === 200) {
     const data = await res.json();
     console.log(data?.table_html);
-    resultDiv.innerHTML = data?.table_html;
+    resultTableDiv.innerHTML = data?.table_html;
+    resultQueryDiv.innerHTML = data?.generated_sql;
     // document.getElementById('resultDiv').innerHTML = data?.table_html || "<p>No data</p>";
   }
 }
