@@ -71,7 +71,10 @@ function extractDBfile(file) {
   });
 }
 
-function extractXlsxFile(e) {
+async function extractXlsxFile(e) {
+  if (e) {
+    // uploadFileToDataChatServer(e);
+  }
   const reader = new FileReader();
   reader.onload = function (e) {
     const data = new Uint8Array(e.target.result);
@@ -109,9 +112,27 @@ function extractXlsxFile(e) {
       tableStructure.push(tempArr);
     }
     console.log("Inferred Table Schema:", tableStructure);
-    displayTableStructure();
+    displayTableStructure(e);
   };
   reader.readAsArrayBuffer(e);
+}
+async function uploadFileToDataChatServer(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  try {
+    const res = await fetch("http://localhost:8000/api/upload-and-store/", {
+      method: "POST",
+      body: formData,
+    });
+    const result = await res.json();
+    if (res.ok) {
+      console.log("Upload successful:", result.message);
+    } else {
+      console.error("Upload failed:", result.detail || "Error");
+    }
+  } catch (error) {
+    console.error("Error  uploading file:", error);
+  }
 }
 function exportToCSV(tableName) {
   var exportLink = document.createElement("a");
@@ -134,7 +155,7 @@ function exportToCSV(tableName) {
   exportLink.click();
 }
 
-function displayTableStructure() {
+function displayTableStructure(e) {
   const outputDiv = document.getElementById("tableOutput");
   outputDiv.innerHTML = "";
 
