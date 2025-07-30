@@ -225,7 +225,7 @@ async function submitQuestion() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      question: "top 1 rrecord",
+      question: "top 5 rrecord",
     }),
   });
 
