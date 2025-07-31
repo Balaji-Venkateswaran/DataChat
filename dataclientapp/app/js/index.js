@@ -1,5 +1,6 @@
 let tableStructure = [];
 var selectedFile = null;
+var resultSqlQuery = null;
 function uploadFile(event) {
   tableStructure = [];
   for (let i = 0; i < event.target.files.length; i++) {
@@ -73,7 +74,7 @@ function extractDBfile(file) {
 
 async function extractXlsxFile(e) {
   if (e) {
-    // uploadFileToDataChatServer(e);
+    uploadFileToDataChatServer(e);
   }
   const reader = new FileReader();
   reader.onload = function (e) {
@@ -240,22 +241,118 @@ async function submitQuestion() {
   // }).then((output) => {
   //   console.log(output)
   // })
+  // question = "top 10 records";
+  // const res = await fetch("http://localhost:8000/api/sql-query/", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     question: question,
+  //   }),
+  // });
 
-  const res = await fetch("http://localhost:8000/api/sql-query/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      question: "top 5 rrecord",
-    }),
-  });
+  question = "top 10 records";
+  data = {
+    context: "The filetype is either csv or xlsx",
+    question: "Show all files uploaded in July",
+  };
+  const res = await fetch(
+    "http://localhost:8000/api/sql-query-context-question/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
 
   if (res.status === 200) {
     const data = await res.json();
     console.log(data?.table_html);
     resultTableDiv.innerHTML = data?.table_html;
     resultQueryDiv.innerHTML = data?.generated_sql;
+    resultSqlQuery = data?.generated_sql;
     // document.getElementById('resultDiv').innerHTML = data?.table_html || "<p>No data</p>";
+    if (resultTableDiv.innerHTML) drawChartRunTime();
   }
+}
+
+function drawChartRunTime() {
+  const { labels, data } = parseTableToChartData();
+  const ctx = document.getElementById("chartCanvas").getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Chart Data",
+          data: data,
+          fill: true,
+          backgroundColor: "rgba(133, 54, 235, 0.6)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          // fill: true,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
+function downloadQueryResult() {
+  // const sql = document.getElementById("sqlQuery").value;
+  if (!resultSqlQuery) return;
+  const sql = resultSqlQuery;
+
+  fetch("http://localhost:8000/api/download-results/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ sql_text: sql }),
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error("Network response was not ok.");
+      return response.blob();
+    })
+    .then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "query_results.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    })
+    .catch((error) => {
+      console.error("Download error:", error);
+      alert("Failed to download CSV");
+    });
+}
+
+function parseTableToChartData(tableId = "") {
+  tableId = "result-table";
+  const table = document.querySelector(`#${tableId} table`);
+  const labels = [];
+  const data = [];
+
+  if (!table) return { labels, data };
+
+  const rows = table.querySelectorAll("tbody tr");
+  rows.forEach((row) => {
+    const cells = row.querySelectorAll("td");
+    labels.push(cells[2].innerText);
+    data.push(Number(cells[2].innerText));
+  });
+
+  return { labels, data };
 }
