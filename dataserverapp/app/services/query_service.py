@@ -42,7 +42,7 @@ supabase_vector_store = SupabaseVectorStore(
     client=supabase_client,
     table_name=SUPABASE_TABLENAME,
     query_name=SUPABASE_FUNCTION_NAME
-)
+) #future use
 output_parser = StrOutputParser()
 sql_prompt_template = PromptTemplate.from_template("""
         You are an expert SQL generator. Given a question and the following table schema:
@@ -171,10 +171,10 @@ async def generate_sql_and_table_bycontext(user_context: str, user_question: str
             raise HTTPException(status_code=400, detail="Only SELECT queries are allowed.")
 
         sql_query = re.sub(r"\bLIKE\b", "ILIKE", sql_query, flags=re.IGNORECASE)
-        print(f"Generated SQL: {sql_query}")
+        # print(f"Generated SQL: {sql_query}")
         sql_query = sql_query.replace('\n', ' ')
         result = supabase_client.rpc("run_sql_query_context", {"sql_text": sql_query}).execute()
-
+        print(f"result data is {result.data}")
         if not result.data:
             return {
                 "generated_sql": sql_query,
