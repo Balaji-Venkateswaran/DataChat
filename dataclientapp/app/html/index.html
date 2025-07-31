@@ -9,6 +9,7 @@
     <script src="../js/index.js"></script>
     <script src="../js/package/sql_wasm.js"></script>
     <script src="../js/package/xlsx.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <div id="content"></div>
@@ -53,10 +54,15 @@
     </div>
    
   </div>
+  <button id="btn_download" onclick="downloadQueryResult()">Download Query Result CSV</button>
   <div> <button class="submit-button" onclick="submitQuestion()">
       Submit</button></div>
     <br/>  
+    <br>
+    <canvas id="chartCanvas"></canvas>
+    <br>
      <div id="result-table"></div> 
      <span>Generated Query:</span><div id="result-query"></div>
+    
   </body>   
 </html>
