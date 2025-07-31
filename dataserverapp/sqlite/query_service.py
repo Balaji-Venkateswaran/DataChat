@@ -2,7 +2,7 @@ import sqlite3
 import json
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings 
 
 
 def query_documents(question: str) -> str:
