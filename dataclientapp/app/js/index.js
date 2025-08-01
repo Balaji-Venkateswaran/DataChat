@@ -1,6 +1,8 @@
 let tableStructure = [];
 var selectedFile = null;
 var resultSqlQuery = null;
+var resultBinaryData = null;
+let resultQuestions = [];
 function uploadFile(event) {
   tableStructure = [];
   for (let i = 0; i < event.target.files.length; i++) {
@@ -117,18 +119,25 @@ async function extractXlsxFile(e) {
   };
   reader.readAsArrayBuffer(e);
 }
+
 async function uploadFileToDataChatServer(file) {
-  
   const formData = new FormData();
   formData.append("file", file);
   try {
-    const res = await fetch("http://localhost:8000/api/upload-and-store/", {
-      method: "POST",
-      body: formData,
-    });
+    const res = await fetch(
+      "http://localhost:8000/api/upload-and-store-context/",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
     const result = await res.json();
     if (res.ok) {
-      console.log("Upload successful:", result.message);
+      console.log("Upload successful:", result);
+      console.log("Upload successful:", result.message); //add question and display in screen-for ref
+      resultQuestions = result?.questions;
+      displayQuestions();
     } else {
       console.error("Upload failed:", result.detail || "Error");
     }
@@ -157,6 +166,34 @@ function exportToCSV(tableName) {
   exportLink.click();
 }
 
+// function displayQuestions() {
+//   const outputDiv = document.getElementById("divQuestion");
+//   if (resultBinaryData && Array.isArray(resultBinaryData)) {
+//     for (let i = 0; i < resultBinaryData.length; i++) {
+//       const value = resultBinaryData[i];
+//       const p = document.createElement("p");
+//       p.textContent = `${i + 1}. ${value}`;
+//       outputDiv.appendChild(p);
+//     }
+//   }
+// }
+
+function displayQuestions() {
+  const outputDiv = document.getElementById("divQuestions");
+  outputDiv.innerHTML = ""; // Clear previous content
+
+  if (Array.isArray(resultQuestions)) {
+    resultQuestions.forEach((question, index) => {
+      const p = document.createElement("p");
+      p.textContent = `${index + 1}. ${question}`;
+      outputDiv.appendChild(p);
+    });
+  } else {
+    outputDiv.innerHTML = "<p>No questions found.</p>";
+  }
+}
+
+
 function displayTableStructure(e) {
   const outputDiv = document.getElementById("tableOutput");
   outputDiv.innerHTML = "";
@@ -164,7 +201,6 @@ function displayTableStructure(e) {
   tableStructure.forEach((table) => {
     const containerDiv = document.createElement("div");
     containerDiv.classList.add("container-box");
-    // containerDiv.style.border = "1px solid #ccc";
     containerDiv.style.padding = "10px";
     containerDiv.style.marginBottom = "20px";
 
@@ -179,7 +215,6 @@ function displayTableStructure(e) {
       exportToCSV(table.tableNames);
     });
 
-    // Add title and button to container
     const headerRow = document.createElement("div");
     headerRow.style.display = "flex";
     headerRow.style.justifyContent = "space-between";
@@ -188,11 +223,9 @@ function displayTableStructure(e) {
     headerRow.appendChild(exportBtn);
     containerDiv.appendChild(headerRow);
 
-    // Create table
     const htmlTable = document.createElement("table");
-htmlTable.classList.add("result-custom-table");
+    htmlTable.classList.add("result-custom-table");
 
-    // const htmlTable = document.createElement("table");
     htmlTable.style.marginTop = "10px";
     htmlTable.style.width = "100%";
     htmlTable.style.borderCollapse = "collapse";
@@ -222,91 +255,182 @@ htmlTable.classList.add("result-custom-table");
     });
 
     htmlTable.appendChild(tbody);
-    // containerDiv.appendChild(htmlTable);
 
     const scrollContainer = document.createElement("div");
-scrollContainer.classList.add("result-table-container");
-scrollContainer.appendChild(htmlTable);
-containerDiv.appendChild(scrollContainer);
+    scrollContainer.classList.add("result-table-container");
+    scrollContainer.appendChild(htmlTable);
+    containerDiv.appendChild(scrollContainer);
 
-
-    // Append container to output
     outputDiv.appendChild(containerDiv);
   });
 }
 
 async function submitQuestion() {
-   showLoader(); 
+  showLoader();
   const questionInput = document.getElementById("question");
   const contextInput = document.getElementById("context");
-  var resultTableDiv = document.getElementById("result-table");
-  var resultQueryDiv = document.getElementById("result-query");
-  console.log(
-    "questionInput",
-    questionInput.value,
-    contextInput.value,
-    selectedFile
-  );
-  // const res = fetch("http://localhost:8000/api/message/").then((res) => {
-  //   return res.json()
-  // }).then((output) => {
-  //   console.log(output)
-  // })
-  // question = "top 10 records";
-  // const res = await fetch("http://localhost:8000/api/sql-query/", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     question: question,
-  //   }),
-  // });
+  const resultTableDiv = document.getElementById("result-table");
+  const resultQueryDiv = document.getElementById("result-query");
+  // const question = questionInput?.value?.trim();
+  // const context = contextInput?.value?.trim();
+  const context =
+    "The table contains employee information such as name, age, department, salary and experience.";
+  const question =
+    "How can I list all employees with a 'Salary' greater than 75000?";
 
-  question = "top 10 records";
-  data = {
-    context: "The filetype is either csv or xlsx",
-    question: "Show all files uploaded in July",
-  };
-  const res = await fetch(
-    "http://localhost:8000/api/sql-query-context-question/",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-  );
-
-  if (res.status === 200) {
-    const data = await res.json();
-    console.log(data?.table_html);
-    resultTableDiv.innerHTML = data?.table_html;
-    resultQueryDiv.innerHTML = data?.generated_sql;
-    resultSqlQuery = data?.generated_sql;
-    // document.getElementById('resultDiv').innerHTML = data?.table_html || "<p>No data</p>";
-    if (resultTableDiv.innerHTML) drawChartRunTime();
+  if (!question || !context) {
+    alert("Please enter both question and context.");
+    return;
   }
-   document.getElementById("resultSection").style.display = "block";
-   hideLoader();
+
+  try {
+    const response = await fetch(
+      "http://localhost:8000/api/query-by-context-auto-id/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          context: context,
+          question: question,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    resultTableDiv.innerHTML = data?.table_html || "<p>No data found</p>";
+    // resultQueryDiv.innerHTML = `<pre>${data?.sql || "No SQL generated"}</pre>`;
+    resultQueryDiv.innerHTML = `<pre>${(
+      data?.sql || "No SQL generated"
+    ).replace(/\n/g, " ")}</pre>`;
+
+    resultBinaryData = data?.excel_base64 || null;
+
+    if (data?.table_html) {
+      drawChartRunTime();
+    }
+  } catch (error) {
+    console.error("Error occurred:", error);
+    resultTableDiv.innerHTML = "<p>Error fetching data</p>";
+    resultQueryDiv.innerHTML = "";
+  }
+  document.getElementById("resultSection").style.display = "block";
+  hideLoader();
 }
+let chartInstance = null;
+
+function showLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "flex"; // flex to apply gap & center
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "none";
+}
+
+function parseTableToChartData(tableId = "result-table") {
+  const table = document.querySelector(`#${tableId} table`);
+  const labels = [];
+  const data = [];
+
+  if (!table) return { labels, data };
+
+  const headerCells = Array.from(table.querySelectorAll("thead tr th"));
+  const deptIndex = headerCells.findIndex(
+    (cell) => cell.innerText.trim().toLowerCase() === "department"
+  );
+  const salaryIndex = headerCells.findIndex(
+    (cell) => cell.innerText.trim().toLowerCase() === "salary"
+  );
+
+  const useDeptAndSalary = deptIndex !== -1 && salaryIndex !== -1;
+  const rows = table.querySelectorAll("tbody tr");
+
+  rows.forEach((row) => {
+    const cells = row.querySelectorAll("td");
+    if (useDeptAndSalary && cells.length > Math.max(deptIndex, salaryIndex)) {
+      const label = cells[deptIndex].innerText.trim();
+      const value = parseFloat(cells[salaryIndex].innerText.trim());
+      if (label && !isNaN(value)) {
+        labels.push(label);
+        data.push(value);
+      }
+    } else {
+      if (cells.length >= 2) {
+        const label = cells[0].innerText.trim();
+        const rawValue = cells[1].innerText.trim();
+        const value = parseFloat(rawValue);
+        if (label && !isNaN(value)) {
+          labels.push(label);
+          data.push(value);
+        }
+      }
+    }
+  });
+
+  return { labels, data };
+}
+
+// function drawChartRunTime() {
+//   const { labels, data } = parseTableToChartData();
+//   const canvas = document.getElementById("chartCanvas");
+//   if (!canvas) return;
+//   const ctx = canvas.getContext("2d");
+
+//   new Chart(ctx, {
+//     type: "bar",
+//     data: {
+//       labels: labels,
+//       datasets: [
+//         {
+//           label: "Chart Data",
+//           data: data,
+//           backgroundColor: "rgba(75, 192, 192, 0.6)",
+//           borderColor: "rgba(75, 192, 192, 1)",
+//           borderWidth: 1,
+//         },
+//       ],
+//     },
+//     options: {
+//       responsive: true,
+//       scales: {
+//         y: {
+//           beginAtZero: true,
+//         },
+//       },
+//     },
+//   });
+// }
 
 function drawChartRunTime() {
   const { labels, data } = parseTableToChartData();
-  const ctx = document.getElementById("chartCanvas").getContext("2d");
-  new Chart(ctx, {
-    type: "line",
+  const canvas = document.getElementById("chartCanvas");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+
+  // ✅ Destroy previous chart if it exists
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+
+  chartInstance = new Chart(ctx, {
+    type: "bar",
     data: {
       labels: labels,
       datasets: [
         {
           label: "Chart Data",
           data: data,
-          fill: true,
-          backgroundColor: "rgba(133, 54, 235, 0.6)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          // fill: true,
+          backgroundColor: "rgba(75, 192, 192, 0.6)",
+          borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,
         },
       ],
@@ -314,77 +438,124 @@ function drawChartRunTime() {
     options: {
       responsive: true,
       scales: {
-        y: {
-          beginAtZero: true,
-        },
+        y: { beginAtZero: true },
       },
     },
   });
 }
+
 function downloadQueryResult() {
-  // const sql = document.getElementById("sqlQuery").value;
-  if (!resultSqlQuery) return;
-  const sql = resultSqlQuery;
-
-  fetch("http://localhost:8000/api/download-results/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ sql_text: sql }),
-  })
-    .then((response) => {
-      if (!response.ok) throw new Error("Network response was not ok.");
-      return response.blob();
-    })
-    .then((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "query_results.csv";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    })
-    .catch((error) => {
-      console.error("Download error:", error);
-      alert("Failed to download CSV");
-    });
+  if (!resultBinaryData) {
+    alert("No data available to download.");
+    return;
+  }
+  const byteCharacters = atob(resultBinaryData);
+  const byteNumbers = Array.from(byteCharacters, (char) => char.charCodeAt(0));
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "query_results.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
 }
 
-// function showLoader() {
-//   document.getElementById('loader').style.display = 'block';
+// function uploadFile(event) {
+//   // ✅ Clear previous state
+//   tableStructure = [];
+//   selectedFile = null;
+//   resultSqlQuery = null;
+//   resultBinaryData = null;
+//   resultQuestions = [];
+
+//   // ✅ Clear related UI elements
+//   document.getElementById("tableOutput").innerHTML = "";
+//   document.getElementById("result-table").innerHTML = "";
+//   document.getElementById("result-query").innerHTML = "";
+//   document.getElementById("resultSection").style.display = "none";
+//   document.getElementById("divQuestions").innerHTML = "";
+//   const chartCanvas = document.getElementById("chartCanvas");
+//   if (chartCanvas) {
+//     const ctx = chartCanvas.getContext("2d");
+//     ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+//   }
+
+//   for (let i = 0; i < event.target.files.length; i++) {
+//     const file = event.target.files[i];
+//     selectedFile = file;
+//     const fileNameArr = file.name;
+//     const fileNameExtacter = fileNameArr.split(".");
+//     const fileName = fileNameExtacter[fileNameExtacter.length - 1].toLowerCase();
+//     console.log("Uploaded File:", file, fileName);
+//     switch (fileName) {
+//       case "db":
+//         extractDBfile(file);
+//         break;
+//       case "xlsx":
+//       case "csv":
+//       case "xls":
+//         extractXlsxFile(file);
+//         break;
+//       default:
+//         alert("Unsupported file type.");
+//     }
+//   }
 // }
- 
-// function hideLoader() {
-//   document.getElementById('loader').style.display = 'none';
-// }
 
-function showLoader() {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'flex'; // flex to apply gap & center
-}
+function uploadFile(event) {
 
-function hideLoader() {
-  const loader = document.getElementById('loader');
-  loader.style.display = 'none';
-}
+  document.getElementById("divQuestions").style.display = "block";
+document.getElementById("resultSection").style.display = "none";
+document.getElementById("result-table").innerHTML = "";
+document.getElementById("chartCanvas").style.display = "none";
+  // ✅ Reset state
+  tableStructure = [];
+  selectedFile = null;
+  resultSqlQuery = null;
+  resultBinaryData = null;
+  resultQuestions = [];
 
+  // ✅ Clear UI
+  document.getElementById("tableOutput").innerHTML = "";
+  document.getElementById("result-table").innerHTML = "";
+  document.getElementById("result-query").innerHTML = "";
+  document.getElementById("resultSection").style.display = "none";
+  document.getElementById("divQuestions").innerHTML = "";
 
-function parseTableToChartData(tableId = "") {
-  tableId = "result-table";
-  const table = document.querySelector(`#${tableId} table`);
-  const labels = [];
-  const data = [];
+  // ✅ Destroy chart instance if exists
+  if (chartInstance) {
+    chartInstance.destroy();
+    chartInstance = null;
+  }
 
-  if (!table) return { labels, data };
+  // ✅ Clear canvas (optional, just to reset visual)
+  const canvas = document.getElementById("chartCanvas");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
-  const rows = table.querySelectorAll("tbody tr");
-  rows.forEach((row) => {
-    const cells = row.querySelectorAll("td");
-    labels.push(cells[2].innerText);
-    data.push(Number(cells[2].innerText));
-  });
+  // ✅ Process new file
+  for (let i = 0; i < event.target.files.length; i++) {
+    const file = event.target.files[i];
+    selectedFile = file;
+    const fileNameExtacter = file.name.split(".");
+    const fileExt = fileNameExtacter[fileNameExtacter.length - 1].toLowerCase();
 
-  return { labels, data };
+    switch (fileExt) {
+      case "db":
+        extractDBfile(file);
+        break;
+      case "xlsx":
+      case "csv":
+      case "xls":
+        extractXlsxFile(file);
+        break;
+      default:
+        alert("Unsupported file type.");
+    }
+  }
 }

@@ -1,7 +1,4 @@
 :root {
-
-
-  
   --bg-color: #ffffffff;
   --text-color: #000000;
   --primary-color: #1e90ff;
@@ -33,7 +30,6 @@
 
 
 .file-input {
-  /* padding: 10px; */
  display: none;
 }
 .upload-button {
@@ -136,7 +132,6 @@ textarea {
 }
 
 .result-custom-table th {
-  /* background-color: #f2f2f2; */
   background-color: var(--tableheader-bg-color);
   font-weight: bold;
   text-transform: uppercase;
@@ -147,7 +142,6 @@ textarea {
 }
 
 .result-custom-table tr:hover {
-  /* background-color: #f1f1f1; */
   background-color: var(--tablehover-bg-color);
 }
 
@@ -156,6 +150,7 @@ textarea {
   border: 1px solid var(--tableeven-bg-color);
   background-color: var(--tablenth-bg-color);
   padding: 10px 10px;
+  
 }
 
 .download-button {
@@ -188,34 +183,7 @@ textarea {
   padding: 20px;
 }
 
-/* 
-.loader {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  display: none;
-  margin: 20px auto;
-}
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.result-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-top: 7%;
-  text-align: center;
-} */
-
-
-/* Container for loader: centers horizontally & vertically if needed */
 .loader-container {
   display: none; /* initially hidden */
   justify-content: center;
@@ -226,13 +194,11 @@ textarea {
   user-select: none;
 }
 
-/* The rotating emoji only */
 .loader-icon {
   display: inline-block;
   animation: spin 1s linear infinite;
 }
 
-/* Static text next to emoji */
 .loader-text {
   font-size: 24px;
   color: var(--color-fg);
@@ -275,4 +241,21 @@ textarea {
   margin: 0;
   font-size: 14px;
   color: #333;
+}
+
+.question1{
+   background-color: var(--tablenth-bg-color);
+  border-left: 4px solid #7e57c2;
+  padding: 15px 30px;
+  margin: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-family: monospace;
+
+  font-size: 14px;
+  color: var(--color-fg);
+}
+
+#divQuestions {
+  display: none;
 }

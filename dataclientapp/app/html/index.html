@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="../css/style.css" />
-
     <script src="../js/index.js"></script>
     <script src="../js/package/sql_wasm.js"></script>
     <script src="../js/package/xlsx.js"></script>
@@ -13,25 +12,7 @@
   </head>
   <body>
     <div id="content"></div>
-
     <script>
-      // fetch("nav.html")
-      //   .then((response) => response.text())
-      //   .then((html) => {
-      //     document.getElementById("content").innerHTML = html;
-      //     document
-      //       .getElementById("themeToggleBtn")
-      //       ?.addEventListener("click", toggleTheme);
-
-      //     function toggleTheme() {
-      //       const currentTheme =
-      //         document.documentElement.getAttribute("data-theme");
-      //      const newTheme = currentTheme === "dark" ? "light" : "dark";
-      //         // const newTheme = currentTheme === "light" ? "dark" : "light";
-      //       document.documentElement.setAttribute("data-theme", newTheme);
-      //     }
-      //   });
-
       fetch("nav.html")
   .then((response) => response.text())
   .then((html) => {
@@ -46,13 +27,11 @@
       const newTheme = currentTheme === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", newTheme);
 
-      // Update button text
       if (themeToggleBtn) {
         themeToggleBtn.textContent = newTheme === "dark" ? "Light" : "Dark";
       }
     }
 
-    // Initialize button text based on current theme
     const currentTheme = document.documentElement.getAttribute("data-theme");
     themeToggleBtn.textContent = currentTheme === "dark" ? "Light" : "Dark";
   });
@@ -71,7 +50,10 @@
        <label for="fileUpload" class="upload-button">Upload File</label>
        </div>
       <div id="tableOutput" class="table-output" style="padding: 0 30px"></div>
+
     </div>
+  </br>
+  <div id="divQuestions" class="question1" ></div>
     <div class="text-container">
       <div class="context">
         <label>Provide Context about Your DataSet</label>
@@ -110,11 +92,7 @@
     <canvas id="chartCanvas" class="canvas"></canvas>
     <br>
     <div id="result-table" class="table-output"></div>
-<!-- 
-<span  class="query1">Generated Query:</span>
-    <div class="query-card">
-  
-<div id="result-query"  class="query"></div></div> -->
+
 
 <div id="resultSection" style="display: none;">
   <span class="query1">Generated Query:</span>
@@ -122,9 +100,5 @@
     <div id="result-query" class="query"></div>
   </div>
 </div>
-
-
-
-
   </body>   
 </html>
