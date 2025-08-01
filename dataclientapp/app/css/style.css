@@ -57,8 +57,10 @@ a {
 }
 
 .field-input {
-  width: 527px;
-  height: 15px;
+  /* width: 527px;
+  height: 15px; */
+  width: 1022px;
+    height: 73px;
 }
 label {
   font-size: 16px;
