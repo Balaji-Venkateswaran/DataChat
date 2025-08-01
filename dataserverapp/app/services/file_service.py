@@ -134,37 +134,39 @@ def generate_prompt_from_df(df: pd.DataFrame) -> str:
     columns = df.columns.tolist()
     types = df.dtypes.astype(str).to_dict()
     sample = df.head(3).to_dict(orient="records")
-
     return (
         "You are a data expert. Based on the following dataset structure and sample records, "
-        "generate 5 interesting and insightful questions a user might ask about this dataset. "
+        "generate 5 interesting and basic questions based on supabase a user might ask about this dataset. "
         "Return only a JSON array of questions as plain strings.\n\n"
         f"Columns: {columns}\n\n"
         f"Data Types: {types}\n\n"
         f"Sample Rows: {sample}"
     )
 
+    # return (
+    #     "You are a data expert. Based on the following dataset structure and sample records, "
+    #     "generate 5 interesting and insightful basic  questions a user might ask about this dataset. "
+    #     "Return only a JSON array of questions as plain strings.\n\n"
+    #     f"Columns: {columns}\n\n"
+    #     f"Data Types: {types}\n\n"
+    #     f"Sample Rows: {sample}"
+    # )
+
 
 async def save_upload_file_and_store_context(file: UploadFile) -> Any:
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file uploaded.")
-
     content = await file.read()
     if len(content) == 0:
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
-
     file_ext = os.path.splitext(file.filename)[1].lower()
     allowed_exts = [".xlsx", ".csv", ".xls"]
     if file_ext not in allowed_exts:
         raise HTTPException(status_code=400, detail=f"Only {allowed_exts} files are supported.")
-
-    # Save file locally
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     with open(file_path, "wb") as buffer:
-        buffer.write(content)
-
-    # Read into DataFrame
+        buffer.write(content) 
     try:
         if file_ext == ".csv":
             df = pd.read_csv(file_path)
@@ -172,25 +174,16 @@ async def save_upload_file_and_store_context(file: UploadFile) -> Any:
             df = pd.read_excel(file_path)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to read file: {e}")
-
     if df.empty:
-        raise HTTPException(status_code=400, detail="Uploaded file is empty or unreadable.")
-
-    # Normalize datetime columns
+        raise HTTPException(status_code=400, detail="Uploaded file is empty or unreadable.") 
     for col in df.columns:
         df[col] = df[col].apply(lambda x: str(x) if isinstance(x, (pd.Timestamp, datetime)) else x)
-
-    # Construct context with full info
     context = {
         "columns": df.columns.tolist(),
         "data_types": df.dtypes.astype(str).to_dict(),
         # "sample_rows": df.head(3).to_dict(orient="records")
     }
-
-    # Convert to plain CSV text
     text_content = df.to_csv(index=False)
-
-    # Generate prompt and LLM questions
     prompt = generate_prompt_from_df(df)
     try:
         result = llm.invoke(prompt)
@@ -209,16 +202,12 @@ async def save_upload_file_and_store_context(file: UploadFile) -> Any:
         else:
             raise ValueError("Unexpected LLM output format.")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"LLM question generation failed: {e}")
-
-    # Generate embedding
+        raise HTTPException(status_code=500, detail=f"LLM question generation failed: {e}") 
     try:
-        content_for_embedding = text_content[:8192]  # truncate to safe size
+        content_for_embedding = text_content[:8192]  # truncate for avoid-execep
         vector = embedding.embed_query(content_for_embedding)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Embedding failed: {e}")
-
-    # Insert into Supabase
     insert_data = {
         "id": str(uuid4()),
         "filename": file.filename,

@@ -288,7 +288,16 @@ def run_sql_query_on_csv(content_text: str, sql: str) -> pd.DataFrame:
         raise HTTPException(status_code=400, detail=f"SQL Execution failed: {e}")
 
 def dataframe_to_html_table(df: pd.DataFrame) -> str:
-    return df.to_html(index=False, classes="table table-bordered")
+    table_html = df.to_html(
+        index=False,
+        classes="table table-bordered table-striped table-hover result-custom-table"
+    )
+    container = f"""
+    <div id="result-table-container" class="table-responsive" style="margin-top: 20px;">
+        {table_html}
+    </div>
+    """
+    return container
 
 def dataframe_to_excel_base64(df: pd.DataFrame) -> str:
     buffer = io.BytesIO()

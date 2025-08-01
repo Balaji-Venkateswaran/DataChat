@@ -58,8 +58,8 @@ class QueryResponseContext(BaseModel):
     table_html: str
     excel_base64: str
 
-@query_router.post("/query-by-context-auto-id", response_model=QueryResponseContext)  # Fix: .post, not just name
-def query_by_context(request: QueryRequestContext) -> Dict[str, Any]:  # Fix: correct class name
+@query_router.post("/query-by-context-auto-id", response_model=QueryResponseContext)  
+def query_by_context(request: QueryRequestContext) -> Dict[str, Any]:  
     try:
         result = process_question_and_query_by_context_and_question(
             context=request.context,
