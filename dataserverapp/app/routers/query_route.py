@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Query, Response
+from fastapi import APIRouter, Query, Response,HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from app.services.query_service import generate_sql_and_table,generate_sql_and_table_bycontext,download_query_results
-
+from app.services.query_service import generate_sql_and_table,generate_sql_and_table_bycontext,download_query_results,process_question_and_query_by_context_and_question
+from typing import Dict, Any
 query_router = APIRouter()
 
 class QueryRequest(BaseModel):
@@ -45,3 +45,26 @@ async def download_results(query: SQLQuery):
             return Response(content="No data found.", media_type="text/plain", status_code=204)
     except Exception as e:
         return {"detail": str(e)}
+    
+    # updated code for auto response by contenxt( using id)
+    
+class QueryRequestContext(BaseModel):
+    context: str
+    question: str
+
+class QueryResponseContext(BaseModel):
+    file_id: str
+    sql: str
+    table_html: str
+    excel_base64: str
+
+@query_router.post("/query-by-context-auto-id", response_model=QueryResponseContext)  
+def query_by_context(request: QueryRequestContext) -> Dict[str, Any]:  
+    try:
+        result = process_question_and_query_by_context_and_question(
+            context=request.context,
+            question=request.question
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
