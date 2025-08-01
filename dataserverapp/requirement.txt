@@ -14,3 +14,4 @@ certifi
 supabase
 dnspython 
 google.generativeai
+pandasql

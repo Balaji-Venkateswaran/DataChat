@@ -118,6 +118,7 @@ async function extractXlsxFile(e) {
   reader.readAsArrayBuffer(e);
 }
 async function uploadFileToDataChatServer(file) {
+  
   const formData = new FormData();
   formData.append("file", file);
   try {
@@ -189,6 +190,9 @@ function displayTableStructure(e) {
 
     // Create table
     const htmlTable = document.createElement("table");
+htmlTable.classList.add("result-custom-table");
+
+    // const htmlTable = document.createElement("table");
     htmlTable.style.marginTop = "10px";
     htmlTable.style.width = "100%";
     htmlTable.style.borderCollapse = "collapse";
@@ -218,7 +222,13 @@ function displayTableStructure(e) {
     });
 
     htmlTable.appendChild(tbody);
-    containerDiv.appendChild(htmlTable);
+    // containerDiv.appendChild(htmlTable);
+
+    const scrollContainer = document.createElement("div");
+scrollContainer.classList.add("result-table-container");
+scrollContainer.appendChild(htmlTable);
+containerDiv.appendChild(scrollContainer);
+
 
     // Append container to output
     outputDiv.appendChild(containerDiv);
@@ -226,6 +236,7 @@ function displayTableStructure(e) {
 }
 
 async function submitQuestion() {
+   showLoader(); 
   const questionInput = document.getElementById("question");
   const contextInput = document.getElementById("context");
   var resultTableDiv = document.getElementById("result-table");
@@ -277,6 +288,8 @@ async function submitQuestion() {
     // document.getElementById('resultDiv').innerHTML = data?.table_html || "<p>No data</p>";
     if (resultTableDiv.innerHTML) drawChartRunTime();
   }
+   document.getElementById("resultSection").style.display = "block";
+   hideLoader();
 }
 
 function drawChartRunTime() {
@@ -338,6 +351,25 @@ function downloadQueryResult() {
       alert("Failed to download CSV");
     });
 }
+
+// function showLoader() {
+//   document.getElementById('loader').style.display = 'block';
+// }
+ 
+// function hideLoader() {
+//   document.getElementById('loader').style.display = 'none';
+// }
+
+function showLoader() {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'flex'; // flex to apply gap & center
+}
+
+function hideLoader() {
+  const loader = document.getElementById('loader');
+  loader.style.display = 'none';
+}
+
 
 function parseTableToChartData(tableId = "") {
   tableId = "result-table";
