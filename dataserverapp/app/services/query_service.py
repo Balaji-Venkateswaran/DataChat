@@ -14,6 +14,9 @@ import re
 import csv
 import io
 from fastapi.responses import StreamingResponse
+import base64
+import pandasql as psql
+from io import StringIO
 
 # Load .env
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
@@ -31,6 +34,7 @@ if not GOOGLE_API_KEY:
 os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
 embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+embedding_model = embedding 
 #llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
@@ -218,3 +222,101 @@ def download_query_results(sql_query: str):
     except Exception as e:
         raise Exception(f"Error downloading results: {str(e)}")
 #./ download 
+
+#/.download for contenxt and questions
+
+def embed_text(text: str) -> list[float]:
+    return embedding_model.embed_query(text)
+
+def search_top_file_by_context(question: str, context: str) -> str:
+    text_to_embed = f"{question} {context}"
+    query_embedding = embed_text(text_to_embed)
+
+    response = supabase_client.rpc("match_documents_centent_by_vector", {
+        "query_embedding": query_embedding,
+        "match_count": 1
+    }).execute()
+
+    if not response.data or len(response.data) == 0:
+        raise HTTPException(status_code=404, detail="No matching file found.")
+
+    return response.data[0]["id"]
+
+def get_context_from_db(file_id: str) -> dict:
+    response = supabase_client.table("file_document_questions") \
+        .select("id, filename, columns, content_text") \
+        .eq("id", file_id) \
+        .single() \
+        .execute()
+
+    if response.data is None:
+        raise HTTPException(status_code=404, detail="File context not found.")
+
+    return response.data
+
+def generate_sql_from_question(context: dict, question: str) -> str:
+    columns = context.get("columns", [])
+    table_schema = ", ".join(columns)
+
+    prompt = f"""
+    You are a data analyst. Given a table called 'df' with columns: {table_schema}
+    Answer the question: "{question}" by generating a SQL SELECT query on the table 'df'.
+    Only use the provided columns. Return only the SQL query.
+    """
+    result = llm.invoke(prompt)
+    sql = result.content.strip() if hasattr(result, "content") else str(result).strip()  # type:ignore
+
+    if sql.startswith("```sql"):
+        sql = sql.replace("```sql", "").replace("```", "").strip()
+    if "employees" in sql:
+       sql = sql.replace("employees", "df")
+    print(f"Generated SQL query:\n{sql}")
+    return sql
+
+def run_sql_query_on_csv(content_text: str, sql: str) -> pd.DataFrame:
+    try:
+        df = pd.read_csv(StringIO(content_text))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"CSV parsing failed: {e}")
+
+    try:
+        result_df = psql.sqldf(sql, {"df": df})
+        if result_df is None or not isinstance(result_df, pd.DataFrame):
+            raise ValueError("SQL execution returned no data.")
+        return result_df
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"SQL Execution failed: {e}")
+
+def dataframe_to_html_table(df: pd.DataFrame) -> str:
+    table_html = df.to_html(
+        index=False,
+        classes="table table-bordered table-striped table-hover result-custom-table"
+    )
+    container = f"""
+    <div id="result-table-container" class="table-responsive" style="margin-top: 20px;">
+        {table_html}
+    </div>
+    """
+    return container
+
+def dataframe_to_excel_base64(df: pd.DataFrame) -> str:
+    buffer = io.BytesIO()
+    df.to_excel(buffer, index=False)
+    buffer.seek(0)
+    return base64.b64encode(buffer.read()).decode()
+
+def process_question_and_query_by_context_and_question(context: str, question: str) -> dict:
+    file_id = search_top_file_by_context(question, context)
+    context_data = get_context_from_db(file_id)
+
+    sql = generate_sql_from_question(context_data, question)
+    df = run_sql_query_on_csv(context_data["content_text"], sql)
+
+    return {
+        "file_id": file_id,
+        "filename": context_data["filename"],
+        "sql": sql,
+        "table_html": dataframe_to_html_table(df),
+        "excel_base64": dataframe_to_excel_base64(df)
+    }
+#/.download for context and questions
