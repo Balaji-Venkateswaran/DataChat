@@ -135,7 +135,7 @@ async function uploadFileToDataChatServer(file) {
     const result = await res.json();
     if (res.ok) {
       console.log("Upload successful:", result);
-      console.log("Upload successful:", result.message); //add question and display in screen-for ref
+      console.log("Upload successful:", result.message);
       resultQuestions = result?.questions;
       displayQuestions();
     } else {
@@ -166,22 +166,9 @@ function exportToCSV(tableName) {
   exportLink.click();
 }
 
-// function displayQuestions() {
-//   const outputDiv = document.getElementById("divQuestion");
-//   if (resultBinaryData && Array.isArray(resultBinaryData)) {
-//     for (let i = 0; i < resultBinaryData.length; i++) {
-//       const value = resultBinaryData[i];
-//       const p = document.createElement("p");
-//       p.textContent = `${i + 1}. ${value}`;
-//       outputDiv.appendChild(p);
-//     }
-//   }
-// }
-
 function displayQuestions() {
   const outputDiv = document.getElementById("divQuestions");
-  outputDiv.innerHTML = ""; // Clear previous content
-
+  outputDiv.innerHTML = "";
   if (Array.isArray(resultQuestions)) {
     resultQuestions.forEach((question, index) => {
       const p = document.createElement("p");
@@ -192,7 +179,6 @@ function displayQuestions() {
     outputDiv.innerHTML = "<p>No questions found.</p>";
   }
 }
-
 
 function displayTableStructure(e) {
   const outputDiv = document.getElementById("tableOutput");
@@ -327,7 +313,7 @@ let chartInstance = null;
 
 function showLoader() {
   const loader = document.getElementById("loader");
-  loader.style.display = "flex"; // flex to apply gap & center
+  loader.style.display = "flex"; 
 }
 
 function hideLoader() {
@@ -378,37 +364,6 @@ function parseTableToChartData(tableId = "result-table") {
   return { labels, data };
 }
 
-// function drawChartRunTime() {
-//   const { labels, data } = parseTableToChartData();
-//   const canvas = document.getElementById("chartCanvas");
-//   if (!canvas) return;
-//   const ctx = canvas.getContext("2d");
-
-//   new Chart(ctx, {
-//     type: "bar",
-//     data: {
-//       labels: labels,
-//       datasets: [
-//         {
-//           label: "Chart Data",
-//           data: data,
-//           backgroundColor: "rgba(75, 192, 192, 0.6)",
-//           borderColor: "rgba(75, 192, 192, 1)",
-//           borderWidth: 1,
-//         },
-//       ],
-//     },
-//     options: {
-//       responsive: true,
-//       scales: {
-//         y: {
-//           beginAtZero: true,
-//         },
-//       },
-//     },
-//   });
-// }
-
 function drawChartRunTime() {
   const { labels, data } = parseTableToChartData();
   const canvas = document.getElementById("chartCanvas");
@@ -416,7 +371,6 @@ function drawChartRunTime() {
 
   const ctx = canvas.getContext("2d");
 
-  // ✅ Destroy previous chart if it exists
   if (chartInstance) {
     chartInstance.destroy();
   }
@@ -463,82 +417,34 @@ function downloadQueryResult() {
   window.URL.revokeObjectURL(url);
 }
 
-// function uploadFile(event) {
-//   // ✅ Clear previous state
-//   tableStructure = [];
-//   selectedFile = null;
-//   resultSqlQuery = null;
-//   resultBinaryData = null;
-//   resultQuestions = [];
-
-//   // ✅ Clear related UI elements
-//   document.getElementById("tableOutput").innerHTML = "";
-//   document.getElementById("result-table").innerHTML = "";
-//   document.getElementById("result-query").innerHTML = "";
-//   document.getElementById("resultSection").style.display = "none";
-//   document.getElementById("divQuestions").innerHTML = "";
-//   const chartCanvas = document.getElementById("chartCanvas");
-//   if (chartCanvas) {
-//     const ctx = chartCanvas.getContext("2d");
-//     ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
-//   }
-
-//   for (let i = 0; i < event.target.files.length; i++) {
-//     const file = event.target.files[i];
-//     selectedFile = file;
-//     const fileNameArr = file.name;
-//     const fileNameExtacter = fileNameArr.split(".");
-//     const fileName = fileNameExtacter[fileNameExtacter.length - 1].toLowerCase();
-//     console.log("Uploaded File:", file, fileName);
-//     switch (fileName) {
-//       case "db":
-//         extractDBfile(file);
-//         break;
-//       case "xlsx":
-//       case "csv":
-//       case "xls":
-//         extractXlsxFile(file);
-//         break;
-//       default:
-//         alert("Unsupported file type.");
-//     }
-//   }
-// }
-
 function uploadFile(event) {
-
   document.getElementById("divQuestions").style.display = "block";
-document.getElementById("resultSection").style.display = "none";
-document.getElementById("result-table").innerHTML = "";
-document.getElementById("chartCanvas").style.display = "none";
-  // ✅ Reset state
+  document.getElementById("resultSection").style.display = "none";
+  document.getElementById("result-table").innerHTML = "";
+  document.getElementById("chartCanvas").style.display = "block";
   tableStructure = [];
   selectedFile = null;
   resultSqlQuery = null;
   resultBinaryData = null;
   resultQuestions = [];
 
-  // ✅ Clear UI
   document.getElementById("tableOutput").innerHTML = "";
   document.getElementById("result-table").innerHTML = "";
   document.getElementById("result-query").innerHTML = "";
   document.getElementById("resultSection").style.display = "none";
   document.getElementById("divQuestions").innerHTML = "";
 
-  // ✅ Destroy chart instance if exists
   if (chartInstance) {
     chartInstance.destroy();
     chartInstance = null;
   }
 
-  // ✅ Clear canvas (optional, just to reset visual)
   const canvas = document.getElementById("chartCanvas");
   if (canvas) {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  // ✅ Process new file
   for (let i = 0; i < event.target.files.length; i++) {
     const file = event.target.files[i];
     selectedFile = file;
