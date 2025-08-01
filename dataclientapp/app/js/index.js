@@ -268,15 +268,15 @@ function displayTableStructure(e) {
 async function submitQuestion() {
   showLoader();
   const questionInput = document.getElementById("question");
-  const contextInput = document.getElementById("context");
+  // const contextInput = document.getElementById("context");
   const resultTableDiv = document.getElementById("result-table");
   const resultQueryDiv = document.getElementById("result-query");
-  // const question = questionInput?.value?.trim();
+  const question = questionInput?.value?.trim();
   // const context = contextInput?.value?.trim();
   const context =
     "The table contains employee information such as name, age, department, salary and experience.";
-  const question =
-    "How can I list all employees with a 'Salary' greater than 75000?";
+  // const question =
+  //   "How can I list all employees with a 'Salary' greater than 75000?";
 
   if (!question || !context) {
     alert("Please enter both question and context.");
