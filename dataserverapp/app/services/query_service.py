@@ -320,3 +320,12 @@ def process_question_and_query_by_context_and_question(context: str, question: s
         "excel_base64": dataframe_to_excel_base64(df)
     }
 #/.download for context and questions
+
+
+#/. query service for sql lite/OPENAI
+
+
+
+
+
+#./ Query Service for sql lite/OPENAI

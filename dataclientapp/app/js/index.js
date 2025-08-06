@@ -124,13 +124,10 @@ async function uploadFileToDataChatServer(file) {
   const formData = new FormData();
   formData.append("file", file);
   try {
-    const res = await fetch(
-      "http://localhost:8000/api/upload-and-store-context/",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const res = await fetch("http://localhost:8000/api/upload-and-store/", {
+      method: "POST",
+      body: formData,
+    });
 
     const result = await res.json();
     if (res.ok) {
@@ -313,7 +310,7 @@ let chartInstance = null;
 
 function showLoader() {
   const loader = document.getElementById("loader");
-  loader.style.display = "flex"; 
+  loader.style.display = "flex";
 }
 
 function hideLoader() {
