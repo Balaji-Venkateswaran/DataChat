@@ -15,3 +15,6 @@ supabase
 dnspython 
 google.generativeai
 pandasql
+openpyxl
+duckdb 
+python-multipart
