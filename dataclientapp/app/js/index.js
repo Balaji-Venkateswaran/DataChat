@@ -138,7 +138,7 @@ async function uploadFileToDataChatServer(file) {
   formData.append("file", file);
   try {
     const res = await fetch(
-      "http://localhost:8000/api/upload-and-store-context/",
+      "http://localhost:8000/api/upload-and-store-duckdb/",
       {
         method: "POST",
         body: formData,
@@ -149,7 +149,7 @@ async function uploadFileToDataChatServer(file) {
     if (res.ok) {
       console.log("Upload successful:", result);
       console.log("Upload successful:", result.message);
-      resultQuestions = result?.questions;
+      resultQuestions = result?.generated_questions;
       displayQuestions();
     } else {
       console.error("Upload failed:", result.detail || "Error");
@@ -287,8 +287,20 @@ async function submitQuestion() {
   lastQueryDetails = { context, question };
 
   try {
+    // const response = await fetch(
+    //   "http://localhost:8000/api/query-by-context-auto-id/",
+    //   {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       context: context,
+    //       question: question,
+    //       chart_type: chartType,
+    //     }),
+    //   }
+    // );
     const response = await fetch(
-      "http://localhost:8000/api/query-by-context-auto-id/",
+      "http://localhost:8000/api/getdata_from_duckdb_context/",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -306,9 +318,9 @@ async function submitQuestion() {
 
     const data = await response.json();
     resultTableDiv.innerHTML = data?.table_html || "<p>No data found</p>";
-    resultQueryDiv.innerHTML = `<pre>${(
+    resultQueryDiv.innerHTML = `<div>${(
       data?.sql || "No SQL generated"
-    ).replace(/\n/g, " ")}</pre>`;
+    ).replace(/\n/g, " ")}</div>`;
     resultBinaryData = data?.excel_base64 || null;
 
     if (resultSection) {
@@ -352,7 +364,7 @@ async function fetchChart(chartType) {
   showLoader();
   try {
     const response = await fetch(
-      "http://localhost:8000/api/query-by-context-auto-id",
+      "http://localhost:8000/api/getdata_from_duckdb_context",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
