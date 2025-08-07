@@ -7,7 +7,7 @@ import pandas as pd
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain.vectorstores.supabase import SupabaseVectorStore
 from dotenv import load_dotenv
-from supabase import create_client, Client
+from supabase import create_client
 import re
 import csv
 import io
@@ -18,14 +18,10 @@ from io import StringIO
 import matplotlib.pyplot as plt
 from typing import Any, Dict, List
 from pydantic import BaseModel
-from langchain.embeddings.base import Embeddings
 from langchain.vectorstores import DuckDB
 import duckdb
-from langchain.vectorstores.utils import DistanceStrategy
-from langchain.text_splitter import CharacterTextSplitter
 from typing import Optional
 from io import BytesIO
-
 class QueryRequestContext(BaseModel):
     context: str
     question: str
@@ -132,8 +128,7 @@ async def generate_sql_and_table(user_question: str):
             "table_html": table_html
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"LLM/SQL error: {str(e)}")
-    
+        raise HTTPException(status_code=500, detail=f"LLM/SQL error: {str(e)}")    
     
 def clean_sql_output(text: str) -> str:   
     text = re.sub(r"```sql", "", text, flags=re.IGNORECASE)
@@ -142,7 +137,6 @@ def clean_sql_output(text: str) -> str:
 
 def sanitize_question(q: str) -> str:
     return q.replace("'", "").replace("`", "").strip()
-
 
 # /. query by context
 
@@ -162,7 +156,6 @@ Question (natural language question to convert to SQL):
 Only return a valid SQL SELECT statement without explanation.
 """)
 
-# 🔁 Updated function name and logic
 async def generate_sql_and_table_bycontext(user_context: str, user_question: str):
     user_question = sanitize_question(user_question)
 
@@ -186,8 +179,7 @@ async def generate_sql_and_table_bycontext(user_context: str, user_question: str
         #     context=(user_context or "").strip(),
         #     question=user_question.strip()
         # )
-
-        # ✅ Use proper chaining with LangChain
+ 
         chain = prompt_template | llm | output_parser
         response = chain.invoke({
             "schema": schema.strip(),
@@ -222,9 +214,7 @@ async def generate_sql_and_table_bycontext(user_context: str, user_question: str
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 # ./ query by context
-
 #/.download 
-
 def download_query_results(sql_query: str):
     try:
         result = supabase_client.rpc("run_sql_query_context", {"sql_text": sql_query}).execute()
@@ -238,7 +228,6 @@ def download_query_results(sql_query: str):
         writer.writeheader()
         writer.writerows(rows)
         output.seek(0)
-
         return StreamingResponse(
             output,
             media_type="text/csv",
@@ -362,7 +351,7 @@ def create_chart_from_dataframe(df: pd.DataFrame, chart_type: str) -> str:
     labels_col = categorical_cols[0]
     data_col = numeric_cols[0]
 
-    # Your existing plotting code starts here
+   
     plt.clf()
     fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -405,7 +394,6 @@ def create_chart_from_dataframe(df: pd.DataFrame, chart_type: str) -> str:
     chart_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
     return chart_base64
 
-
 def process_question_and_query_by_context_and_question(context: str, question: str, chart_type: str = "bar") -> dict:
     file_id = search_top_file_by_context(question, context)
     context_data = get_context_from_db(file_id)
@@ -436,8 +424,7 @@ async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
     try:
         chart_type ="bar"
         question = payload.question
-
-        # Step 1: Retrieve relevant documents from vector store
+      
         vs = DuckDB(
             embedding=embedding,
             connection=duckdb_connection,
@@ -450,8 +437,7 @@ async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
             raise HTTPException(status_code=404, detail="No relevant documents found")
 
         context_text = "\n".join([doc.page_content for doc in docs])
-
-        # Step 2: Generate SQL query using Gemini
+       
         prompt = (
             f"You are a data analyst. Based on the context and table name below, "
             f"write an optimized DuckDB-compatible SQL query that answers the user question.\n\n"
@@ -463,14 +449,11 @@ async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
 
         response = llm.invoke(prompt)
         sql_query = getattr(response, "content", response).strip() # type:ignore
-
-        # Step 2.5: Clean up LLM response if it contains markdown or code fences
+       
         if "```" in sql_query:
             sql_query = sql_query.replace("```sql", "").replace("```", "").replace("```python", "").strip()
 
-        print(f"[Generated SQL] {sql_query}")
-
-        # Step 3: Run the SQL query on DuckDB
+        print(f"[Generated SQL] {sql_query}")       
         con = duckdb.connect(DUCKDB_PATH)
         result_df = con.execute(sql_query).fetchdf()
         

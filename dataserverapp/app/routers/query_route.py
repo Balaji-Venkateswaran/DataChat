@@ -3,13 +3,12 @@ from pydantic import BaseModel
 from typing import Optional
 from app.services.query_service  import generate_sql_and_table,generate_sql_and_table_bycontext,download_query_results,process_question_and_query_by_context_and_question
 from app.services.query_service  import getdata_from_duckdb,QueryRequestDuck
-
 from typing import Dict, Any
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from typing import Any, Dict
-query_router = APIRouter()
 from app.services.query_service import download_query_results,process_question_and_query_by_context_and_question
 
+query_router = APIRouter()
 class QueryRequest(BaseModel):
     context: Optional[str] = None 
     # sqltext: Optional[str] = None
@@ -71,7 +70,7 @@ class QueryResponseContext(BaseModel):
     chart_image_base64:str
  
 
-# This imports the correct models and functions from the updated service file.
+
 query_router = APIRouter()
 
 # --- API Endpoints ---
