@@ -15,7 +15,7 @@ env/
 # Environment variables
 .env
 *.env
-
+**/.env
 # macOS / Linux / Windows
 .DS_Store
 Thumbs.db
@@ -42,3 +42,9 @@ dist/
 
 # Jupyter
 .ipynb_checkpoints/
+#ignore uploads
+uploads/
+dataserverapp/.env
+
+employee_data.duckdb
+employee_data.duckdb.wal

@@ -1,0 +1,16 @@
+
+# how to setup environment( first time)
+# cd dataserverapp
+# python -m venv venv
+# pip install -r requirement.txt
+
+
+
+# how to run
+# cd dataserverapp
+# runenv
+# run
+
+
+
+

@@ -1,0 +1,37 @@
+OverView of DataChat
+    1.Upload a File – Supports .csv, .xlsx, .sqlite3, .db
+
+    2.View Data Structure – Columns, types, sample rows
+
+    3.Ask a Question – Like “Total sales by year”
+
+    4.LM Generates SQL – Automatically builds correct query
+
+    5.Show Results – As a table and a chart (bar, line, pie)
+
+    6.Download – Export CSV, SQL, chart code
+
+ Queries generation steps
+    Upload File --> Extract Schema --> Prompt --> Send to LLM --> Moduel(eg:Gemini Pro) --> Querie --> DataBase --> Response
+  
+ Implementations
+    1.DataBase --> Insert Some Record
+    2.LLM Application --> Moduel --> Queries --> DataBase
+
+
+Plugin for extraction 
+     File Type     | Recommended Library    
+     .csv          |   PapaParse           
+     .xlsx, .xls   |   SheetJS             
+     .sqlite3, .db |   sql.js       
+
+Generate queries with an LLM    
+       Options                 | Works with Vanilla JS  |Offline |      Free 	            |     Notes
+      OpenAI GPT via API       | Yes 	                | No	 | Free trial only	        |  Requires API key; you get ~$5–$18 in free credits when signing up
+      Gemini (Google) API      | Yes                    | No	 | Yes (generous free tier) |	50K tokens/day free via Google Cloud (Gemini Flash 2.5)
+      ggml / WebLLM / LLM WASM | Yes	                | Yes    | Yes	Fully open source;  |  models like Mistral, TinyLLaMA can run in browser
+      GPT-4.1-nano/mini        | Yes                    | Yes    | Yes (if self-hosted)     | Not publicly available; you must compile or fine-tune yourself   
+
+
+
+    
