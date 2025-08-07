@@ -1,5 +1,3 @@
-# service.py
-
 import os
 from fastapi import HTTPException
 from langchain_core.prompts import PromptTemplate
@@ -17,7 +15,22 @@ from fastapi.responses import StreamingResponse
 import base64
 import pandasql as psql
 from io import StringIO
+import matplotlib.pyplot as plt
+from typing import Any, Dict, List
+from pydantic import BaseModel
 
+class QueryRequestContext(BaseModel):
+    context: str
+    question: str
+    chart_type: str
+
+class QueryResponseContext(BaseModel):
+    file_id: str
+    filename: str
+    sql: str
+    table_html: str
+    excel_base64: str
+    chart_image_base64: str
 # Load .env
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
 load_dotenv(dotenv_path=env_path)
@@ -304,20 +317,99 @@ def dataframe_to_excel_base64(df: pd.DataFrame) -> str:
     df.to_excel(buffer, index=False)
     buffer.seek(0)
     return base64.b64encode(buffer.read()).decode()
+def create_chart_from_dataframe(df: pd.DataFrame, chart_type: str) -> str:
+    """
+    Generates a chart (bar, line, or pie) from the DataFrame and returns it
+    as a base64-encoded PNG image.
+    If no numeric data is present, it will count occurrences of a categorical
+    column to generate a bar chart.
+    """
+    if df.empty:
+        print("DataFrame is empty, cannot generate chart.")
+        return ""
 
-def process_question_and_query_by_context_and_question(context: str, question: str) -> dict:
+    numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+    categorical_cols = df.select_dtypes(exclude=['number']).columns.tolist()
+
+    # Special case: If only categorical data is available, count occurrences of the first column
+    if not numeric_cols and categorical_cols:
+        count_series = df[categorical_cols[0]].value_counts().reset_index()
+        count_series.columns = ['Category', 'Count']
+        df = count_series
+        numeric_cols = ['Count']
+        categorical_cols = ['Category']
+        chart_type = 'bar'  # Force to a bar chart as it's the most appropriate
+        print(f"No numeric data found. Generating a count-based bar chart on column: {categorical_cols[0]}")
+
+    # After handling the special case, check again if we have enough data to plot
+    if not numeric_cols or not categorical_cols:
+        print("Not enough suitable columns for a chart, even after counting.")
+        return ""
+
+    labels_col = categorical_cols[0]
+    data_col = numeric_cols[0]
+
+    # Your existing plotting code starts here
+    plt.clf()
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    if chart_type == 'bar':
+        # ... (your existing bar chart code, which is fine as is for this case)
+        if len(df[labels_col]) > 20:
+            df = df.sort_values(by=data_col, ascending=False).head(20)
+        ax.bar(df[labels_col], df[data_col])
+        ax.set_ylabel(data_col)
+        ax.set_xlabel(labels_col)
+        ax.set_title(f"Count of {labels_col}")
+        plt.xticks(rotation=45, ha='right')
+    elif chart_type == 'line':
+        # ... (your line chart code)
+        ax.plot(df[labels_col], df[data_col], marker='o')
+        ax.set_ylabel(data_col)
+        ax.set_xlabel(labels_col)
+        ax.set_title(f"{chart_type.capitalize()} Chart: {data_col} by {labels_col}")
+        plt.xticks(rotation=45, ha='right')
+    elif chart_type == 'pie':
+        # ... (your pie chart code)
+        if len(df[labels_col]) > 10:
+            df_sorted = df.sort_values(by=data_col, ascending=False).head(10)
+            labels = df_sorted[labels_col].tolist()
+            data = df_sorted[data_col].tolist()
+        else:
+            labels = df[labels_col].tolist()
+            data = df[data_col].tolist()
+        ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=90)
+        ax.axis('equal')
+        ax.set_title(f"Distribution by {labels_col}")
+    else:
+        print(f"Unsupported chart type: {chart_type}")
+        return ""
+
+    plt.tight_layout()
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    chart_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    return chart_base64
+
+
+def process_question_and_query_by_context_and_question(context: str, question: str, chart_type: str) -> dict:
     file_id = search_top_file_by_context(question, context)
     context_data = get_context_from_db(file_id)
 
     sql = generate_sql_from_question(context_data, question)
     df = run_sql_query_on_csv(context_data["content_text"], sql)
+    if chart_type:
+        chart_image_base64 = create_chart_from_dataframe(df, chart_type)
 
     return {
         "file_id": file_id,
         "filename": context_data["filename"],
         "sql": sql,
         "table_html": dataframe_to_html_table(df),
-        "excel_base64": dataframe_to_excel_base64(df)
+        "excel_base64": dataframe_to_excel_base64(df),
+        "chart_image_base64": chart_image_base64
+
     }
 #/.download for context and questions
 

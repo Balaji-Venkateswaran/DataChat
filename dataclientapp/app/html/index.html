@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="../css/style.css" />
-    <script src="../js/index.js"></script>
-    <script src="../js/package/sql_wasm.js"></script>
-    <script src="../js/package/xlsx.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
   </head>
   <body>
     <div id="content"></div>
@@ -89,7 +89,14 @@
   <span class="loader-text">Thinking</span>
 </div>
     </div>
-    <canvas id="chartCanvas" class="canvas"></canvas>
+   
+
+    <img id="chartImage" class="canvas" style="display: none;">
+     <div id="chartIcons" class="chart-icons">
+        <i class="fa-solid fa-chart-bar chart-icon" id="barChartBtn" title="Bar Chart"></i>
+        <i class="fa-solid fa-chart-line chart-icon" id="lineChartBtn" title="Line Chart"></i>
+        <i class="fa-solid fa-chart-pie chart-icon" id="pieChartBtn" title="Pie Chart"></i>
+    </div>
     <br>
     <div id="result-table" class="table-output"></div>
 
@@ -100,5 +107,11 @@
     <div id="result-query" class="query"></div>
   </div>
 </div>
+
+ <script src="../js/index.js"></script>
+  <script src="../js/package/sql_wasm.js"></script>
+  <script src="../js/package/xlsx.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   </body>   
 </html>
