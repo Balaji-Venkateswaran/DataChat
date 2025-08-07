@@ -3,12 +3,18 @@ var selectedFile = null;
 var resultSqlQuery = null;
 var resultBinaryData = null;
 let resultQuestions = [];
-let lastQueryDetails = { context: '', question: '' };
+let lastQueryDetails = { context: "", question: "" };
 let chartInstance = null;
 
-document.getElementById('barChartBtn').addEventListener('click', () => fetchChart('bar'));
-document.getElementById('lineChartBtn').addEventListener('click', () => fetchChart('line'));
-document.getElementById('pieChartBtn').addEventListener('click', () => fetchChart('pie'));
+document
+  .getElementById("barChartBtn")
+  .addEventListener("click", () => fetchChart("bar"));
+document
+  .getElementById("lineChartBtn")
+  .addEventListener("click", () => fetchChart("line"));
+document
+  .getElementById("pieChartBtn")
+  .addEventListener("click", () => fetchChart("pie"));
 
 function uploadFile(event) {
   tableStructure = [];
@@ -131,16 +137,19 @@ async function uploadFileToDataChatServer(file) {
   const formData = new FormData();
   formData.append("file", file);
   try {
-    const res = await fetch("http://localhost:8000/api/upload-and-store/", {
-      method: "POST",
-      body: formData,
-    });
+    const res = await fetch(
+      "http://localhost:8000/api/upload-and-store-duckdb/",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     const result = await res.json();
     if (res.ok) {
       console.log("Upload successful:", result);
       console.log("Upload successful:", result.message);
-      resultQuestions = result?.questions;
+      resultQuestions = result?.generated_questions;
       displayQuestions();
     } else {
       console.error("Upload failed:", result.detail || "Error");
@@ -266,25 +275,39 @@ async function submitQuestion() {
 
   const question = questionInput?.value?.trim();
   const chartType = "bar"; // Default chart type
-  const context = "The table contains employee information such as name, age, department, salary and experience."; // Hardcoded context
+  const context =
+    "The table contains employee information such as name, age, department, salary and experience."; // Hardcoded context
 
   if (!question) {
     alert("Please enter a question.");
     hideLoader();
     return;
   }
-  
+
   lastQueryDetails = { context, question };
 
   try {
+    // const response = await fetch(
+    //   "http://localhost:8000/api/query-by-context-auto-id/",
+    //   {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       context: context,
+    //       question: question,
+    //       chart_type: chartType,
+    //     }),
+    //   }
+    // );
     const response = await fetch(
-      "http://localhost:8000/api/query-by-context-auto-id/", {
+      "http://localhost:8000/api/getdata_from_duckdb_context/",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           context: context,
           question: question,
-          chart_type: chartType
+          chart_type: chartType,
         }),
       }
     );
@@ -295,31 +318,35 @@ async function submitQuestion() {
 
     const data = await response.json();
     resultTableDiv.innerHTML = data?.table_html || "<p>No data found</p>";
-    resultQueryDiv.innerHTML = `<pre>${(data?.sql || "No SQL generated").replace(/\n/g, " ")}</pre>`;
+    resultQueryDiv.innerHTML = `<div>${(
+      data?.sql || "No SQL generated"
+    ).replace(/\n/g, " ")}</div>`;
     resultBinaryData = data?.excel_base64 || null;
-    
+
     if (resultSection) {
-        resultSection.style.display = "block";
+      resultSection.style.display = "block";
     }
 
     if (data?.chart_image_base64) {
-      if(chartImage && chartIcons) {
+      if (chartImage && chartIcons) {
         chartImage.src = `data:image/png;base64,${data.chart_image_base64}`;
         chartImage.style.display = "block";
         chartIcons.style.display = "flex";
       }
     } else {
-      if(chartImage && chartIcons) {
+      if (chartImage && chartIcons) {
         chartImage.style.display = "none";
         chartIcons.style.display = "none";
-        alert("Chart could not be generated for this data. Please try another chart type.");
+        alert(
+          "Chart could not be generated for this data. Please try another chart type."
+        );
       }
     }
   } catch (error) {
     console.error("Error occurred:", error);
     resultTableDiv.innerHTML = "<p>Error fetching data</p>";
     resultQueryDiv.innerHTML = "";
-    if(chartImage && chartIcons) {
+    if (chartImage && chartIcons) {
       chartImage.style.display = "none";
       chartIcons.style.display = "none";
     }
@@ -328,57 +355,56 @@ async function submitQuestion() {
   hideLoader();
 }
 
-
 async function fetchChart(chartType) {
-        if (!lastQueryDetails.question) {
-            alert("Please submit a question first to generate a chart.");
-            return;
-        }
+  if (!lastQueryDetails.question) {
+    alert("Please submit a question first to generate a chart.");
+    return;
+  }
 
-        showLoader();
-        try {
-            const response = await fetch(
-                "http://localhost:8000/api/query-by-context-auto-id",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        context: lastQueryDetails.context,
-                        question: lastQueryDetails.question,
-                        chart_type: chartType // This is where the parameter is sent
-                    }),
-                }
-            );
+  showLoader();
+  try {
+    const response = await fetch(
+      "http://localhost:8000/api/getdata_from_duckdb_context",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          context: lastQueryDetails.context,
+          question: lastQueryDetails.question,
+          chart_type: chartType, // This is where the parameter is sent
+        }),
+      }
+    );
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const chartIcons = document.getElementById("chartIcons");
-            const chartImage = document.getElementById("chartImage");
-            
-            if (data?.chart_image_base64) {
-                chartImage.src = `data:image/png;base64,${data.chart_image_base64}`;
-                chartImage.style.display = "block";
-                chartIcons.style.display = "flex";
-
-              } else {
-                chartImage.src = '';
-                chartImage.style.display = 'none';
-                document.getElementById("chartIcons").style.display = "none";
-                alert("Chart could not be generated for this data. Please try another type.");
-            }
-
-        } catch (error) {
-            console.error("Error fetching new chart:", error);
-            const chartImage = document.getElementById("chartImage");
-            chartImage.src = '';
-            chartImage.style.display = 'none';
-            document.getElementById("chartIcons").style.display = "none";
-        }
-        hideLoader();
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+    const chartIcons = document.getElementById("chartIcons");
+    const chartImage = document.getElementById("chartImage");
+
+    if (data?.chart_image_base64) {
+      chartImage.src = `data:image/png;base64,${data.chart_image_base64}`;
+      chartImage.style.display = "block";
+      chartIcons.style.display = "flex";
+    } else {
+      chartImage.src = "";
+      chartImage.style.display = "none";
+      document.getElementById("chartIcons").style.display = "none";
+      alert(
+        "Chart could not be generated for this data. Please try another type."
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching new chart:", error);
+    const chartImage = document.getElementById("chartImage");
+    chartImage.src = "";
+    chartImage.style.display = "none";
+    document.getElementById("chartIcons").style.display = "none";
+  }
+  hideLoader();
+}
 
 function showLoader() {
   const loader = document.getElementById("loader");
@@ -499,8 +525,7 @@ function uploadFile(event) {
   resultSqlQuery = null;
   resultBinaryData = null;
   resultQuestions = [];
-  lastQueryDetails = { context: '', question: '' };
-
+  lastQueryDetails = { context: "", question: "" };
 
   document.getElementById("tableOutput").innerHTML = "";
   document.getElementById("result-table").innerHTML = "";

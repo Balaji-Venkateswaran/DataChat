@@ -1,9 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
-from app.services.file_service import save_upload_file,save_upload_file_and_store, save_upload_file_and_store_context
+from app.services.file_service import save_upload_file,save_upload_file_and_store, save_upload_file_and_store_context,upload_file_store_duckdb
 
 upload_router = APIRouter()
-
 @upload_router.post("/upload-file")
 async def upload_file(file: UploadFile = File(...)):
     file_path = await save_upload_file(file)
@@ -31,6 +30,15 @@ async def upload_and_store_file_context(file: UploadFile = File(...)):
     except HTTPException as e:
         raise e
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))        
+  
+@upload_router.post("/upload-and-store-duckdb")
+async def upload_and_store_duckdb(file: UploadFile = File(...)):
+    try:
+        result = await upload_file_store_duckdb(file)
+        return JSONResponse(content=result)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
     
-  
