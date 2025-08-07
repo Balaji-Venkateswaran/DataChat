@@ -29,7 +29,8 @@ os.environ["GOOGLE_API_KEY"] = llm_api_key
 print(f"api key is {llm_api_key}")
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
-    temperature=0.3   
+    temperature=0.3,   
+    api_key=llm_api_key   # type:ignore
 )
 #/.supabase
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -136,7 +137,7 @@ def generate_prompt_from_df(df: pd.DataFrame) -> str:
     sample = df.head(3).to_dict(orient="records")
     return (
         "You are a data expert. Based on the following dataset structure and sample records, "
-        "generate 5 interesting and advanced questions based on supabase a user might ask about this dataset. "
+        "generate 5 interesting and basic questions based on supabase a user might ask about this dataset. "
         "Return only a JSON array of questions as plain strings.\n\n"
         f"Columns: {columns}\n\n"
         f"Data Types: {types}\n\n"
