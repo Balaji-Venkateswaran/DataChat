@@ -5,7 +5,6 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 import pandas as pd
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain.vectorstores.supabase import SupabaseVectorStore
 from dotenv import load_dotenv
 from supabase import create_client
 import re
@@ -18,7 +17,10 @@ from io import StringIO
 import matplotlib.pyplot as plt
 from typing import Any, Dict, List
 from pydantic import BaseModel
-from langchain.vectorstores import DuckDB
+# from langchain.vectorstores.supabase import SupabaseVectorStore
+# from langchain.vectorstores import DuckDB
+from langchain_community.vectorstores import SupabaseVectorStore
+from langchain_community.vectorstores import DuckDB
 import duckdb
 from typing import Optional
 from io import BytesIO

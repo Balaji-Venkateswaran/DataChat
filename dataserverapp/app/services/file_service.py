@@ -13,8 +13,11 @@ import json
 from typing import Any
 import duckdb
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
-from langchain.vectorstores import DuckDB
-from langchain.vectorstores.utils import DistanceStrategy
+# from langchain.vectorstores import DuckDB
+# from langchain.vectorstores.utils import DistanceStrategy
+from langchain_community.vectorstores import DuckDB
+from langchain_community.vectorstores.utils import DistanceStrategy
+
 #/.Config
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
