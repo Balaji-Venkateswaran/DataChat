@@ -47,17 +47,27 @@ body {
 }
 .upload-button {
   display: inline-block;
-  padding: 10px 40px;
+  padding: 10px 17px;
   background-color: var(--button-bg-color);
-    margin: 20px;
+    /* margin: 20px; */
   color: #fff;
-  font-size: 15px;
+  font-size: 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 360px;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
+.download-button {
+  padding: 10px 17px;
+  background-color: var(--submit-bg-color);
+  /* margin-left: 350px; */
+  /* float: left; */
+  border: none;
+    font-size: 20px;
+
+  border-radius: 360px;
+}
 
 body {
   background-color: var(--color-bg);
@@ -111,13 +121,15 @@ textarea {
 }
 .submit-button {
   padding: 10px;
+  /* margin-right: 20px; */
   background-color: var(--submit-bg-color);
-  margin-right: 75px;
-  margin-top: 10px;
-  float: right;
+  /* margin-right: 75px;
+  margin-top: 10px; */
+  /* float: right; */
   border: none;
-  border-radius: 5px;
-  width: 100px;
+  border-radius: 10px;
+  font-size: 15px;
+  width: 50px;
 }
 
 .container-box {
@@ -168,16 +180,7 @@ textarea {
   
 }
 
-.download-button {
-  padding: 10px;
-  background-color: var(--submit-bg-color);
-  margin-left: 45px;
-  margin-top: 10px;
-  float: left;
-  border: none;
-  border-radius: 5px;
-  width: 200px;
-}
+
 .canvas{
       display: block;
     box-sizing: border-box;
@@ -313,3 +316,30 @@ textarea {
     overflow-wrap: break-word !important;      
   
   }
+
+
+  .action-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 30px;
+  /* flex-wrap: wrap;  */
+}
+
+.action-row .upload-button,
+.action-row .submit-button,
+.action-row .download-button {
+  height: 50px;
+}
+
+.action-row .question {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.action-row .field-input {
+  width: 100%;
+  height: 50px;
+  /* resize: none; */
+}
