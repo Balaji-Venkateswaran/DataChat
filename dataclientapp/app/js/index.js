@@ -5,7 +5,7 @@ var resultBinaryData = null;
 let resultQuestions = [];
 let lastQueryDetails = { context: "", question: "" };
 let chartInstance = null;
-
+let selectedLLMModel = "gemini-2.5-flash";
 document
   .getElementById("barChartBtn")
   .addEventListener("click", () => fetchChart("bar"));
@@ -308,6 +308,7 @@ async function submitQuestion() {
           context: context,
           question: question,
           chart_type: chartType,
+          selected_llm_model: selectedLLMModel ?? "gemini-2.5-flash",
         }),
       }
     );
@@ -562,5 +563,12 @@ function uploadFile(event) {
       default:
         alert("Unsupported file type.");
     }
+  }
+}
+
+function llmModelChange() {
+  selectedLLMModel = document.getElementById("llm-model").value;
+  if (!selectedLLMModel) {
+    selectedLLMModel = "gemini-2.5-flash";
   }
 }
