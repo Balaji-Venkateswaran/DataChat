@@ -343,3 +343,8 @@ textarea {
   height: 50px;
   /* resize: none; */
 }
+
+select#llm-model {
+  background-color: #9d60c5;
+  color:white
+}

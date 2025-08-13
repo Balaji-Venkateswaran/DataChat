@@ -1,115 +1,3 @@
-<!-- 
-
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="../css/style.css" />
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
-  </head>
-  <body>
-    <div id="content"></div>
-    <script>
-      fetch("nav.html")
-  .then((response) => response.text())
-  .then((html) => {
-
-    document.getElementById("content").innerHTML = html;
-      document.documentElement.setAttribute("data-theme", 'dark');
-    const themeToggleBtn = document.getElementById("themeToggleBtn");
-    themeToggleBtn?.addEventListener("click", toggleTheme);
-
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute("data-theme");
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", newTheme);
-
-      if (themeToggleBtn) {
-        themeToggleBtn.textContent = newTheme === "dark" ? "Light" : "Dark";
-      }
-    }
-
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    themeToggleBtn.textContent = currentTheme === "dark" ? "Light" : "Dark";
-  });
-
-    </script>
-    <div class="file">
- 
-      <div id="tableOutput" class="table-output" style="padding: 0 30px"></div>
-
-    </div>
-  </br>
-  <div id="divQuestions" class="question1" ></div>
-   
-
-  <div class="action-row">
-    <div class="upload-wrapper" style="display: none;">
-  <input
-    class="file-input"
-    id="fileUpload"
-    type="file"
-    accept=".csv, .xls, .xlsx, .db"
-    onchange="uploadFile(event)"
-  />
-</div>
-  <label for="fileUpload" class="upload-button">✙</label>
-  
-  <div class="question">
-    <label>Ask a question about your DataSet</label>
-    <textarea
-      class="field-input"
-      id="question"
-      placeholder="Enter your question here..."
-    ></textarea>
-  </div>
-
-  <button id="btn_download" class="download-button" onclick="downloadQueryResult()">🡻</button>
-  <button class="submit-button" onclick="submitQuestion()">ᯓ➤</button>
-</div>
-
-    <br/>  
-    <br>
-    <div class="result-container">
-      <div id="loader" class="loader-container">
-  <span class="loader-icon">⏳</span>
-  <span class="loader-text">Thinking</span>
-</div>
-    </div>
-   
-
-    <img id="chartImage" class="canvas" style="display: none;">
-     <div id="chartIcons" class="chart-icons">
-        <i class="fa-solid fa-chart-bar chart-icon" id="barChartBtn" title="Bar Chart"></i>
-        <i class="fa-solid fa-chart-line chart-icon" id="lineChartBtn" title="Line Chart"></i>
-        <i class="fa-solid fa-chart-pie chart-icon" id="pieChartBtn" title="Pie Chart"></i>
-    </div>
-    <br>
-    <div id="result-table" class="table-output"></div>
-
-
-<div id="resultSection" style="display: none;">
-  <span class="query1">Generated Query:</span>
-  <div class="query-card">
-    <div id="result-query" class="query"></div>
-  </div>
-</div>
-
- <script src="../js/index.js"></script>
-  <script src="../js/package/sql_wasm.js"></script>
-  <script src="../js/package/xlsx.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  </body>   
-</html> -->
-
-
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
   <head>
@@ -152,9 +40,9 @@
 
     <label for="models">Choose a Model:</label>
 
-<select name="model" id="model">
-  <option value="chatgpt">ChatGPT</option>
-  <option value="gemini">Gemini</option>
+<select name="llm-model" id="llm-model" onchange="llmModelChange()">
+  <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+  <option value="gemini-2.5-flash" selected>gemini-2.5-flash</option>
 </select>
 
    <div id="tableOutput" class="table-output" style="padding: 0 30px"></div>

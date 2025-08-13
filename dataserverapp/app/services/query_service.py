@@ -331,69 +331,72 @@ def create_chart_from_dataframe(df: pd.DataFrame, chart_type: str) -> str:
     if df.empty:
         print("DataFrame is empty, cannot generate chart.")
         return ""
+    try:
+        numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+        categorical_cols = df.select_dtypes(exclude=['number']).columns.tolist()
 
-    numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
-    categorical_cols = df.select_dtypes(exclude=['number']).columns.tolist()
+        # Special case: If only categorical data is available, count occurrences of the first column
+        if not numeric_cols and categorical_cols:
+            count_series = df[categorical_cols[0]].value_counts().reset_index()
+            count_series.columns = ['Category', 'Count']
+            df = count_series
+            numeric_cols = ['Count']
+            categorical_cols = ['Category']
+            chart_type = 'bar'  # Force to a bar chart as it's the most appropriate
+            print(f"No numeric data found. Generating a count-based bar chart on column: {categorical_cols[0]}")
 
-    # Special case: If only categorical data is available, count occurrences of the first column
-    if not numeric_cols and categorical_cols:
-        count_series = df[categorical_cols[0]].value_counts().reset_index()
-        count_series.columns = ['Category', 'Count']
-        df = count_series
-        numeric_cols = ['Count']
-        categorical_cols = ['Category']
-        chart_type = 'bar'  # Force to a bar chart as it's the most appropriate
-        print(f"No numeric data found. Generating a count-based bar chart on column: {categorical_cols[0]}")
+        # After handling the special case, check again if we have enough data to plot
+        if not numeric_cols or not categorical_cols:
+            print("Not enough suitable columns for a chart, even after counting.")
+            return ""
 
-    # After handling the special case, check again if we have enough data to plot
-    if not numeric_cols or not categorical_cols:
-        print("Not enough suitable columns for a chart, even after counting.")
-        return ""
+        labels_col = categorical_cols[0]
+        data_col = numeric_cols[0]
 
-    labels_col = categorical_cols[0]
-    data_col = numeric_cols[0]
+    
+        plt.clf()
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-   
-    plt.clf()
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    if chart_type == 'bar':
-        # ... (your existing bar chart code, which is fine as is for this case)
-        if len(df[labels_col]) > 20:
-            df = df.sort_values(by=data_col, ascending=False).head(20)
-        ax.bar(df[labels_col], df[data_col])
-        ax.set_ylabel(data_col)
-        ax.set_xlabel(labels_col)
-        ax.set_title(f"Count of {labels_col}")
-        plt.xticks(rotation=45, ha='right')
-    elif chart_type == 'line':
-        # ... (your line chart code)
-        ax.plot(df[labels_col], df[data_col], marker='o')
-        ax.set_ylabel(data_col)
-        ax.set_xlabel(labels_col)
-        ax.set_title(f"{chart_type.capitalize()} Chart: {data_col} by {labels_col}")
-        plt.xticks(rotation=45, ha='right')
-    elif chart_type == 'pie':
-        # ... (your pie chart code)
-        if len(df[labels_col]) > 10:
-            df_sorted = df.sort_values(by=data_col, ascending=False).head(10)
-            labels = df_sorted[labels_col].tolist()
-            data = df_sorted[data_col].tolist()
+        if chart_type == 'bar':
+            # ... (your existing bar chart code, which is fine as is for this case)
+            if len(df[labels_col]) > 20:
+                df = df.sort_values(by=data_col, ascending=False).head(20)
+            ax.bar(df[labels_col], df[data_col])
+            ax.set_ylabel(data_col)
+            ax.set_xlabel(labels_col)
+            ax.set_title(f"Count of {labels_col}")
+            plt.xticks(rotation=45, ha='right')
+        elif chart_type == 'line':
+            # ... (your line chart code)
+            ax.plot(df[labels_col], df[data_col], marker='o')
+            ax.set_ylabel(data_col)
+            ax.set_xlabel(labels_col)
+            ax.set_title(f"{chart_type.capitalize()} Chart: {data_col} by {labels_col}")
+            plt.xticks(rotation=45, ha='right')
+        elif chart_type == 'pie':
+            # ... (your pie chart code)
+            if len(df[labels_col]) > 10:
+                df_sorted = df.sort_values(by=data_col, ascending=False).head(10)
+                labels = df_sorted[labels_col].tolist()
+                data = df_sorted[data_col].tolist()
+            else:
+                labels = df[labels_col].tolist()
+                data = df[data_col].tolist()
+            ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=90)
+            ax.axis('equal')
+            ax.set_title(f"Distribution by {labels_col}")
         else:
-            labels = df[labels_col].tolist()
-            data = df[data_col].tolist()
-        ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=90)
-        ax.axis('equal')
-        ax.set_title(f"Distribution by {labels_col}")
-    else:
-        print(f"Unsupported chart type: {chart_type}")
-        return ""
+            print(f"Unsupported chart type: {chart_type}")
+            return ""
 
-    plt.tight_layout()
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    chart_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        plt.tight_layout()
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        chart_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    except Exception as e:
+         return str(e)
+        
     return chart_base64
 
 def process_question_and_query_by_context_and_question(context: str, question: str, chart_type: str = "bar") -> dict:
@@ -421,17 +424,24 @@ class QueryRequestDuck(BaseModel):
     # sqltext: Optional[str] = None
     question: str 
     chart_type: Optional[str] = None 
+    selected_llm_model : Optional[str] = None
+    
     
 async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
     try:
         chart_type ="bar"
         question = payload.question
-      
+        selected_llm_model = payload.selected_llm_model if payload.selected_llm_model else 'gemini-2.5-flash'
         vs = DuckDB(
             embedding=embedding,
             connection=duckdb_connection,
             table_name=EMBED_TABLE,
         )
+        llm = ChatGoogleGenerativeAI(
+                model=selected_llm_model,
+                temperature=0.2
+        )
+        print(f"selected llm :{selected_llm_model}")
 
         docs = vs.similarity_search(question, k=3)
 
