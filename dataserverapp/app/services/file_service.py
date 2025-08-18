@@ -29,7 +29,6 @@ if not llm_api_key:
     print("API key required.")
     exit(1)
 os.environ["GOOGLE_API_KEY"] = llm_api_key
-print(f"api key is {llm_api_key}")
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     temperature=0.3,   
@@ -110,7 +109,6 @@ async def save_upload_file_and_store(file: UploadFile):
     response = supabase_client.table("file_documents").insert(insert_data).execute()
     if not response.data:
         raise HTTPException(status_code=500, detail=f"Failed to insert data into Supabase. Response: {response}")
-    print(f"columns are {columns}")
     return {"message": "File uploaded and embedded using Gemini successfully."}
 #./file upload
 #/. File Upload with context 

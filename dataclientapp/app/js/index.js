@@ -24,7 +24,6 @@ function uploadFile(event) {
     const fileNameArr = file.name;
     const fileNameExtacter = fileNameArr.split(".");
     const fileName = fileNameExtacter[fileNameExtacter.length - 1];
-    console.log("Uploaded File:", file, fileName);
     switch (fileName) {
       case "db":
         extractDBfile(file);
@@ -49,7 +48,6 @@ function extractDBfile(file) {
       const result = db.exec(
         "SELECT name FROM sqlite_master WHERE type='table';"
       );
-      console.log("result", result);
       if (!result.length) {
         console.log("No tables found.");
         return;
@@ -59,7 +57,6 @@ function extractDBfile(file) {
         const tableNames = result[i].values.flat();
         tableNames.forEach((table) => {
           const pragma = db.exec(`PRAGMA table_info(${table});`);
-          console.log(`Table: ${table}`);
           let tempArr = {
             tableNames: table,
             tableInfo: [],
@@ -73,14 +70,10 @@ function extractDBfile(file) {
               PK: pk == "1" ? pk : "NO",
               Not_Null: !notnull ? "NO" : notnull,
             });
-            console.log(
-              `  Column: ${name}, Type: ${type}, Not Null: ${notnull}, Default: ${dflt_value}, PK: ${pk}`
-            );
           });
           tableStructure.push(tempArr);
         });
       });
-      console.log(tableStructure);
       displayTableStructure();
     };
     reader.readAsArrayBuffer(file);
@@ -95,7 +88,6 @@ async function extractXlsxFile(e) {
   reader.onload = function (e) {
     const data = new Uint8Array(e.target.result);
     const workbook = XLSX.read(data, { type: "array" });
-    console.log("workbook", workbook);
 
     for (let i = 0; i < workbook?.SheetNames.length; i++) {
       tempArr = {
@@ -104,7 +96,6 @@ async function extractXlsxFile(e) {
       };
       const sheetName = workbook.SheetNames[i];
 
-      console.log("sheet", sheetName);
       const worksheet = workbook.Sheets[sheetName];
       tempArr.tableNames = sheetName;
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
@@ -127,7 +118,6 @@ async function extractXlsxFile(e) {
       tempArr.tableInfo.push(...schema);
       tableStructure.push(tempArr);
     }
-    console.log("Inferred Table Schema:", tableStructure);
     displayTableStructure(e);
   };
   reader.readAsArrayBuffer(e);
@@ -147,8 +137,6 @@ async function uploadFileToDataChatServer(file) {
 
     const result = await res.json();
     if (res.ok) {
-      console.log("Upload successful:", result);
-      console.log("Upload successful:", result.message);
       resultQuestions = result?.generated_questions;
       displayQuestions();
     } else {
@@ -163,7 +151,6 @@ function exportToCSV(tableName) {
   var csvContent = tableStructure
     .filter((table) => table.tableNames === tableName)
     .map((table) => {
-      console.log("table", table, table.tableInfo[0]);
       const headers = Object.keys(table.tableInfo[0]);
       const rows = table.tableInfo.map((row) =>
         headers.map((header) => row[header]).join(",")
@@ -171,7 +158,6 @@ function exportToCSV(tableName) {
       return [headers.join(","), ...rows].join("\n");
     })
     .join("\n\n");
-  console.log("csvContent", csvContent);
   var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   var url = URL.createObjectURL(blob);
   exportLink.href = url;
@@ -274,7 +260,7 @@ async function submitQuestion() {
   const chartImage = document.getElementById("chartImage");
 
   const question = questionInput?.value?.trim();
-  const chartType = "bar"; // Default chart type
+  const chartType = "bar";
   const context =
     "The table contains employee information such as name, age, department, salary and experience."; // Hardcoded context
 
@@ -287,18 +273,6 @@ async function submitQuestion() {
   lastQueryDetails = { context, question };
 
   try {
-    // const response = await fetch(
-    //   "http://localhost:8000/api/query-by-context-auto-id/",
-    //   {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       context: context,
-    //       question: question,
-    //       chart_type: chartType,
-    //     }),
-    //   }
-    // );
     const response = await fetch(
       "http://localhost:8000/api/getdata_from_duckdb_context/",
       {
@@ -372,7 +346,7 @@ async function fetchChart(chartType) {
         body: JSON.stringify({
           context: lastQueryDetails.context,
           question: lastQueryDetails.question,
-          chart_type: chartType, // This is where the parameter is sent
+          chart_type: chartType,
         }),
       }
     );
@@ -462,8 +436,6 @@ function parseTableToChartData(tableId = "result-table") {
 
 function drawChartRunTime() {
   const { labels, data } = parseTableToChartData();
-  // const canvas = document.getElementById("chartCanvas");
-  // if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
 
@@ -517,7 +489,6 @@ function uploadFile(event) {
   document.getElementById("divQuestions").style.display = "block";
   document.getElementById("resultSection").style.display = "none";
   document.getElementById("result-table").innerHTML = "";
-  // document.getElementById("chartCanvas").style.display = "block";
   document.getElementById("chartImage").style.display = "none";
   document.getElementById("chartIcons").style.display = "none";
 
@@ -538,12 +509,6 @@ function uploadFile(event) {
     chartInstance.destroy();
     chartInstance = null;
   }
-
-  // const canvas = document.getElementById("chartCanvas");
-  // if (canvas) {
-  //   const ctx = canvas.getContext("2d");
-  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // }
 
   for (let i = 0; i < event.target.files.length; i++) {
     const file = event.target.files[i];

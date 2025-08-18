@@ -111,15 +111,11 @@ async def generate_sql_and_table(user_question: str):
         chain = sql_prompt_template | llm | output_parser
         response = chain.invoke({"schema": schema, "question": user_question})        
         # sql_query =response.content.strip("`").strip() #type:ignore
-        # print(f"result is :{response}")
         sql_query = clean_sql_output(response)
-        # print(f"sql_query :{sql_query}")        
         if not sql_query.lower().startswith(("select", "insert", "update", "delete")):
            raise HTTPException(status_code=400, detail="Invalid or unsupported SQL operation.")
-        # print(f"{sql_query}")       
         sql_query= re.sub(r"\bLIKE\b", "ILIKE", sql_query, flags=re.IGNORECASE)     
         result = supabase_client.rpc("run_sql_query", {"sql_text": sql_query}).execute()
-        # print(f"result is {result}")
         if not result.data:
             return {"generated_sql": sql_query, "table_html": "<p>No data found</p>"}
         df = pd.DataFrame(result.data)
@@ -195,10 +191,8 @@ async def generate_sql_and_table_bycontext(user_context: str, user_question: str
             raise HTTPException(status_code=400, detail="Only SELECT queries are allowed.")
 
         sql_query = re.sub(r"\bLIKE\b", "ILIKE", sql_query, flags=re.IGNORECASE)
-        # print(f"Generated SQL: {sql_query}")
         sql_query = sql_query.replace('\n', ' ')
         result = supabase_client.rpc("run_sql_query_context", {"sql_text": sql_query}).execute()
-        # print(f"result data is {result.data}")
         if not result.data:
             return {
                 "generated_sql": sql_query,
@@ -287,7 +281,6 @@ def generate_sql_from_question(context: dict, question: str) -> str:
         sql = sql.replace("```sql", "").replace("```", "").strip()
     if "employees" in sql:
        sql = sql.replace("employees", "df")
-    # print(f"Generated SQL query:\n{sql}")
     return sql
 
 def run_sql_query_on_csv(content_text: str, sql: str) -> pd.DataFrame:
@@ -343,7 +336,6 @@ def create_chart_from_dataframe(df: pd.DataFrame, chart_type: str) -> str:
             numeric_cols = ['Count']
             categorical_cols = ['Category']
             chart_type = 'bar'  # Force to a bar chart as it's the most appropriate
-            print(f"No numeric data found. Generating a count-based bar chart on column: {categorical_cols[0]}")
 
         # After handling the special case, check again if we have enough data to plot
         if not numeric_cols or not categorical_cols:
@@ -441,7 +433,6 @@ async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
                 model=selected_llm_model,
                 temperature=0.2
         )
-        print(f"selected llm :{selected_llm_model}")
 
         docs = vs.similarity_search(question, k=3)
 
@@ -465,7 +456,6 @@ async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
         if "```" in sql_query:
             sql_query = sql_query.replace("```sql", "").replace("```", "").replace("```python", "").strip()
 
-        print(f"[Generated SQL] {sql_query}")       
         con = duckdb.connect(DUCKDB_PATH)
         result_df = con.execute(sql_query).fetchdf()
         
