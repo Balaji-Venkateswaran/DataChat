@@ -11,6 +11,9 @@
 # if installed, proceed to next else download the python version 3.x and install
 # npm install pip
 # pip install -r requirement.txt
+# pip install matplotlib
+# pip install duckdb
+
 # run
 # if no error it show the server run url and port
 
