@@ -23,6 +23,8 @@ Install dependencies:
 ___________________
 cd Datachat/dataserverapp
 pip install -r requirements.txt
+pip install matplotlib
+pip install duckdb
 
 
 Run the server:
