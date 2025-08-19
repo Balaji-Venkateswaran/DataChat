@@ -43,7 +43,10 @@ Bar, Line and Pie
 
 A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
 
-Download & Install min Python 3.x. ```sh https://www.python.org/downloads/) ```
+Download & Install min Python 3.x. 
+```sh 
+https://www.python.org/downloads/)
+```
 
 `git` installed on your system to clone the repository.
 
@@ -51,7 +54,10 @@ Download & Install min Python 3.x. ```sh https://www.python.org/downloads/) ```
 ## Clone the Repository
 
 Open your terminal or command prompt and run the following command:
-CMD: git clone ```sh https://github.com/Balaji-Venkateswaran/DataChat.git] ```
+CMD: 
+```sh
+git clone https://github.com/Balaji-Venkateswaran/DataChat.git] 
+```
 
 ---
 ## Getting Started
@@ -69,7 +75,10 @@ Open a terminal (VS Code Terminal or Command Prompt).
 
 **Step 3:**
 Navigate to the server directory:
-CMD: ```sh cd Datachat/dataserverapp ```
+CMD: 
+```sh 
+cd Datachat/dataserverapp 
+```
 
 **Step 4:**
 Verify Python is installed:
@@ -91,7 +100,10 @@ pip install duckdb
 ```
 **Step 6:**
 #### Run the server:
-CMD: ```shcd Datachat/dataserverapp ``` ( cmd path should be in this dir)
+CMD: 
+```sh
+cd Datachat/dataserverapp 
+``` 
 
 run.bat else just type run  only, it start the server
 
@@ -100,7 +112,10 @@ If everything is fine, the terminal will show the server running URL & port
 **Step 7:**
 #### Run the Client
 Navigate to the client app directory: 
-CMD: ```sh cd Datachat/dataclientapp/app/html ```
+CMD: 
+```sh 
+cd Datachat/dataclientapp/app/html
+```
 
 **Step 8:**
 Install VS Code extension ----> Search: Live Server Preview.
