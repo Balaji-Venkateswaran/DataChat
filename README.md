@@ -84,8 +84,10 @@ pip install duckdb
 
 **Step 6:**
 #### Run the server:
-cd Datachat/dataserverapp  ( cmd path should be in this dir)
+CMD: cd Datachat/dataserverapp  ( cmd path should be in this dir)
+
 run.bat else just type run  only, it start the server
+
 If everything is fine, the terminal will show the server running URL & port 
 
 **Step 7:**
