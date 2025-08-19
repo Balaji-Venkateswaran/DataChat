@@ -18,7 +18,7 @@ Smart Question Suggestions: Automatically suggests relevant and insightful quest
 
 Natural Language Interface: Ask data-related questions in plain English—e.g., “What was the average profit in 2022?”—and receive precise, structured responses.
 
-LLM-Powered Query Engine: Uses lightweight LLMs (GPT-4.1-nano, o4-mini, Gemini Flash, etc.) to interpret queries, build logic, and generate optimized SQL queries.
+LLM-Powered Query Engine: Uses lightweight LLMs ( Gemini Flash) to interpret queries, build logic, and generate optimized SQL queries.
 
 Detailed Analytical Feedback: Each query returns:
 
