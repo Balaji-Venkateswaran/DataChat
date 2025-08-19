@@ -1,72 +1,108 @@
-# 📊 Data Chat – Smart Data Query & Visualization Assistant
-
-**Data Chat** is a simple, browser-based tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results — all without any coding or server involvement.
-
+#Data Chat – Smart Data Query & Visualization Assistant
+_______________________________________________________
+**Data Chat** is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results
 ---
-
-## 🚀 About The Project
-
-**Data Chat** is an intuitive, fully client-side tool that empowers users to explore datasets in formats like CSV, Excel, and SQLite. Ask data-related questions in plain English and get SQL queries, visualizations, and insights in real time.
-
-🔐 All processing is done **locally in your browser**, ensuring privacy and speed.
-
+##About The Project
+__________________
+**Data Chat** is an intuitive, browser-based tool that allows users to upload datasets in CSV, Excel, or SQLite format and explore them without any coding. Users can ask questions in plain English, and the tool automatically generates SQL queries, displays results in tables, and creates interactive visualizations. All data processing happens on the client side, ensuring privacy and speed. Results can be easily downloaded for further use.
 ---
+##Features
+_________
+Client-Side Execution Only: Fully frontend-powered using Vanilla JavaScript—no server, backend, or data upload required for processing.
 
-## ✨ Features
+Multi-Format File Support: Easily upload and analyze datasets in .csv, .xlsx, .sqlite3, or .db formats.
 
-- **💻 100% Client-Side Execution**  
-  No backend, no server—powered entirely by Vanilla JavaScript. Your data never leaves your computer.
+Automatic Table Structure Detection: Instantly displays all table names, columns, and data types upon file upload for quick schema understanding.
 
-- **📂 Multi-Format File Support**  
-  Upload and analyze datasets in `.csv`, `.xlsx`, `.sqlite3`, or `.db` formats.
+Smart Question Suggestions: Automatically suggests relevant and insightful questions based on your dataset's structure to guide your analysis.
 
-- **🧠 Automatic Table Detection**  
-  Instantly detects table names, columns, and data types for quick schema understanding.
+Natural Language Interface: Ask data-related questions in plain English—e.g., “What was the average profit in 2022?”—and receive precise, structured responses.
 
-- **🤖 Smart Question Suggestions**  
-  Generates helpful questions based on your dataset structure.
+LLM-Powered Query Engine: Uses lightweight LLMs (GPT-4.1-nano, o4-mini, Gemini Flash, etc.) to interpret queries, build logic, and generate optimized SQL queries.
 
-- **💬 Natural Language Interface**  
-  Ask questions like:  
-  `"What was the average profit in 2022?"`  
-  and get structured answers and SQL code.
+Detailed Analytical Feedback: Each query returns:
+A plain-English explanation of your question
+Logical steps and analysis used to derive the result
+Relevant table relationships
+Auto-generated SQL query
+JavaScript (Chart.js) code for visualization
 
-- **🧩 LLM-Powered Query Engine**  
-  Uses lightweight LLMs (e.g., GPT-4.1-nano, o4-mini, Gemini Flash) to understand and translate your questions into SQL.
+Dynamic Table View & Export:
+View results in a responsive, interactive table
+Export the results as a .csv file
+Copy or download the generated SQL query
 
-- **📊 Detailed Analytical Feedback**  
-  Every query returns:
-  - A plain-English explanation
-  - Logical steps used in analysis
-  - Inferred table relationships
-  - Auto-generated SQL query
-  - Chart.js-based visualization code
-
-- **📈 Built-In Chart Visualizations**  
-  Automatically render:
-  - Bar Charts  
-  - Line Charts  
-  - Pie Charts  
-  With downloadable Chart.js code.
-
-- **📋 Dynamic Table View & Export**  
-  - Interactive table view of results  
-  - Export results to `.csv`  
-  - Copy or download SQL query
-
+Built-In Chart Visualizations: Automatically render charts using Chart.js, including:
+Bar, Line and Pie
+Downloadable JavaScript chart code for reuse or modification
 ---
-
-## 🧰 Prerequisites
-
-- A modern web browser (Chrome, Firefox, Safari, Edge)
-- `git` installed on your system
-- Python 3.x installed
-
+##Prerequisites
+_____________
+A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
+Download & Install min Python 3.x. (https://www.python.org/downloads/)
+`git` installed on your system to clone the repository.
 ---
+##Clone the Repository
+____________________
+Open your terminal or command prompt and run the following command:
+CMD: git clone [https://github.com/Balaji-Venkateswaran/DataChat.git]
+---
+##Getting Started
+________________
+Follow these simple steps to get the tool up and running on your local machine.
+---
+##Run the Server
+______________
+Step 1:
+Open the project folder in VS Code.
 
-## 📥 Clone the Repository
+Step 2:
+Open a terminal (VS Code Terminal or Command Prompt).
 
-Open your terminal and run:
+Step 3:
+Navigate to the server directory:
+CMD: cd Datachat/dataserverapp
 
-```bash
-git clone https://github.com/Balaji-Venkateswaran/DataChat.git
+Step 4:
+Verify Python is installed:
+CMD: python -V
+Next:
+If you see a version (e.g., Python 3.12.x), continue.
+If not installed -----> Download & Install min Python 3.x. (https://www.python.org/downloads/)
+
+Step 5:
+##Install dependencies:
+___________________
+cd Datachat/dataserverapp
+pip install -r requirements.txt
+pip install matplotlib
+pip install duckdb
+
+Step 6:
+Run the server:
+_______________
+cd Datachat/dataserverapp  ( cmd path should be in this dir)
+run.bat else just type run  only, it start the server
+If everything is fine, the terminal will show the server running URL & port 
+
+Step 7:
+Run the Client
+_________________
+Navigate to the client app directory:
+CMD: cd Datachat/dataclientapp/app/html
+
+Step 8:
+Install VS Code extension ----> Search: Live Server Preview.
+
+Step 9:
+Right-click on index.html -----> select Open with Live Server Preview.
+
+Step 10:
+Upload a file and start using the client.
+---
+Note
+______
+Temporarily turn off Kaspersky antivirus if it blocks the server or client connection.
+
+If everything is fine, you’ll see the server running URL & port 
+---
