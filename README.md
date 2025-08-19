@@ -18,7 +18,7 @@ Smart Question Suggestions: Automatically suggests relevant and insightful quest
 
 Natural Language Interface: Ask data-related questions in plain English—e.g., “What was the average profit in 2022?”—and receive precise, structured responses.
 
-LLM-Powered Query Engine: Uses lightweight LLMs ( Gemini Flash) to interpret queries, build logic, and generate optimized SQL queries.
+LLM-Powered Query Engine: Uses lightweight LLMs (GPT-4.1-nano, o4-mini, Gemini Flash, etc.) to interpret queries, build logic, and generate optimized SQL queries.
 
 Detailed Analytical Feedback: Each query returns:
 
@@ -43,7 +43,10 @@ Bar, Line and Pie
 
 A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
 
-Download & Install min Python 3.x. (https://www.python.org/downloads/)
+Download & Install min Python 3.x. 
+```sh 
+https://www.python.org/downloads/
+```
 
 `git` installed on your system to clone the repository.
 
@@ -51,7 +54,10 @@ Download & Install min Python 3.x. (https://www.python.org/downloads/)
 ## Clone the Repository
 
 Open your terminal or command prompt and run the following command:
-CMD: git clone [https://github.com/Balaji-Venkateswaran/DataChat.git]
+CMD: 
+```sh
+git clone https://github.com/Balaji-Venkateswaran/DataChat.git
+```
 
 ---
 ## Getting Started
@@ -69,29 +75,38 @@ Open a terminal (VS Code Terminal or Command Prompt).
 
 **Step 3:**
 Navigate to the server directory:
-CMD: cd Datachat/dataserverapp
+CMD: 
+```sh 
+cd Datachat/dataserverapp 
+```
 
 **Step 4:**
 Verify Python is installed:
-CMD: python -V
+CMD: ```sh  python -V ```
 Next:
 If you see a version (e.g., Python 3.12.x), continue.
 
-If not installed -----> Download & Install min Python 3.x. (https://www.python.org/downloads/)
+If not installed -----> Download & Install min Python 3.x. 
+```sh 
+https://www.python.org/downloads/
+ ```
 
 **Step 5:**
 #### Install dependencies:
 cd Datachat/dataserverapp
-
+```sh
 pip install -r requirements.txt
 
 pip install matplotlib
 
 pip install duckdb
-
+```
 **Step 6:**
 #### Run the server:
-CMD: cd Datachat/dataserverapp  ( cmd path should be in this dir)
+CMD: 
+```sh
+cd Datachat/dataserverapp 
+``` 
 
 run.bat else just type run  only, it start the server
 
@@ -100,7 +115,10 @@ If everything is fine, the terminal will show the server running URL & port
 **Step 7:**
 #### Run the Client
 Navigate to the client app directory: 
-CMD: cd Datachat/dataclientapp/app/html
+CMD: 
+```sh 
+cd Datachat/dataclientapp/app/html
+```
 
 **Step 8:**
 Install VS Code extension ----> Search: Live Server Preview.
