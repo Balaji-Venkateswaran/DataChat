@@ -5,7 +5,7 @@
 ---
 ## About the Project
 
-**Data Chat** is an interactive data query tool that empowers users to explore datasets, generate SQL queries, derive insights, and Visualize results. Users can upload files and instantly interact with the data through smart question suggestions and real-time table previews. Built in Python, the system uses LangChain to orchestrate LLM models like Gemini 2.5 Flash and Gemini 1.5 Flash, enabling intelligent SQL query generation, actionable insights, and dynamic chart visualizations. The application integrates **CloudDB (Supabase)** for persistent storage of user accounts, file metadata, chat history, and saved queries, while **DuckDB (Standalone)** provides high performance, in-memory or local file–based analytics execution. This hybrid architecture allows for both long-term data retention in the cloud and ultra-fast query execution locally.
+**Data Chat** is an interactive data query tool that empowers users to explore datasets, generate SQL queries, derive insights, and visualize results. Users can upload files and instantly interact with the data through smart question suggestions and real-time table previews. Built in Python, the system uses LangChain to orchestrate LLM models like Gemini 2.5 Flash and Gemini 1.5 Flash, enabling intelligent SQL query generation, actionable insights, and dynamic chart visualizations. The application relies entirely on **DuckDB (Standalone)** for high-performance, in-memory or local file–based analytics execution. While **CloudDB (Supabase)** was tested for persistent storage of user accounts, file metadata, chat history, and saved queries.
 
 ---
 ## Features
