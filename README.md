@@ -35,8 +35,6 @@ View results in a responsive, interactive table
 
 Export the results as a .csv file
 
-Copy or download the generated SQL query
-
 Built-In Chart Visualizations: Automatically render charts using matplotlib, including:
 Bar, Line and Pie
 
