@@ -45,7 +45,7 @@ A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
 
 Download & Install min Python 3.x. 
 ```sh 
-https://www.python.org/downloads/)
+https://www.python.org/downloads/
 ```
 
 `git` installed on your system to clone the repository.
@@ -56,7 +56,7 @@ https://www.python.org/downloads/)
 Open your terminal or command prompt and run the following command:
 CMD: 
 ```sh
-git clone https://github.com/Balaji-Venkateswaran/DataChat.git] 
+git clone https://github.com/Balaji-Venkateswaran/DataChat.git
 ```
 
 ---
@@ -86,7 +86,10 @@ CMD: ```sh  python -V ```
 Next:
 If you see a version (e.g., Python 3.12.x), continue.
 
-If not installed -----> Download & Install min Python 3.x. ```sh https://www.python.org/downloads/ ```
+If not installed -----> Download & Install min Python 3.x. 
+```sh 
+https://www.python.org/downloads/
+ ```
 
 **Step 5:**
 #### Install dependencies:
