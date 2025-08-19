@@ -5,10 +5,11 @@
 ---
 ## About The Project
 
-This is an intuitive, browser-based tool that allows users to upload datasets in CSV, Excel, or SQLite format and explore them without any coding. Users can ask questions in plain English, and the tool automatically generates SQL queries, displays results in tables, and creates interactive visualizations. All data processing happens on the client side, ensuring privacy and speed. Results can be easily downloaded for further use.
+**Data Chat** is an intuitive, browser-based tool that allows users to upload datasets in CSV, Excel, or SQLite format and explore them without any coding. Users can ask questions in plain English, and the tool automatically generates SQL queries, displays results in tables, and creates interactive visualizations. All data processing happens on the client side, ensuring privacy and speed. Results can be easily downloaded for further use.
 
 ---
 ## Features
+
 Client-Side Execution Only: Fully frontend-powered using Vanilla JavaScript—no server, backend, or data upload required for processing.
 
 Multi-Format File Support: Easily upload and analyze datasets in .csv, .xlsx, .sqlite3, or .db formats.
@@ -38,49 +39,56 @@ Bar, Line and Pie
 Downloadable JavaScript chart code for reuse or modification
 ---
 ## Prerequisites
+
 A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
 Download & Install min Python 3.x. (https://www.python.org/downloads/)
 `git` installed on your system to clone the repository.
+
 ---
 ## Clone the Repository
+
 Open your terminal or command prompt and run the following command:
 CMD: git clone [https://github.com/Balaji-Venkateswaran/DataChat.git]
+
 ---
 ## Getting Started
+
 Follow these simple steps to get the tool up and running on your local machine.
+
 ---
 ## Run the Server
-Step 1:
+
+**Step 1:**
 Open the project folder in VS Code.
 
-Step 2:
+**Step 2:**
 Open a terminal (VS Code Terminal or Command Prompt).
 
-Step 3:
+**Step 3:**
 Navigate to the server directory:
 CMD: cd Datachat/dataserverapp
 
-Step 4:
+**Step 4:**
 Verify Python is installed:
 CMD: python -V
 Next:
 If you see a version (e.g., Python 3.12.x), continue.
 If not installed -----> Download & Install min Python 3.x. (https://www.python.org/downloads/)
 
-Step 5:
+**Step 5:**
 ## Install dependencies:
 cd Datachat/dataserverapp
 pip install -r requirements.txt
 pip install matplotlib
 pip install duckdb
 
-Step 6:
+**Step 6:**
 ## Run the server:
 cd Datachat/dataserverapp  ( cmd path should be in this dir)
 run.bat else just type run  only, it start the server
 If everything is fine, the terminal will show the server running URL & port 
 
-Step 7:
+**Step 7:**
 ## Run the Client
 Navigate to the client app directory:
 CMD: cd Datachat/dataclientapp/app/html
