@@ -1,6 +1,6 @@
 # Data Chat – Smart Data Query & Visualization Assistant
 
-**Data Chat** is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results.
+**Data Chat** is an interactive data query tool that empowers users to explore datasets, generate SQL queries, derive insights, and visualize results. 
 
 ---
 ## About The Project
@@ -10,7 +10,7 @@
 ---
 ## Features
 
-Client-Side Execution Only: Fully frontend-powered using Vanilla JavaScript—no server, backend, or data upload required for processing.
+Client-Side Execution Only: Fully frontend-powered using Vanilla JavaScript.
 
 Multi-Format File Support: Easily upload and analyze datasets in .csv, .xlsx, .sqlite3, or .db formats.
 
@@ -32,8 +32,6 @@ Relevant table relationships
 
 Auto-generated SQL query
 
-JavaScript (Chart.js) code for visualization
-
 Dynamic Table View & Export:
 View results in a responsive, interactive table
 
@@ -41,7 +39,7 @@ Export the results as a .csv file
 
 Copy or download the generated SQL query
 
-Built-In Chart Visualizations: Automatically render charts using Chart.js, including:
+Built-In Chart Visualizations: Automatically render charts using matplotlib, including:
 Bar, Line and Pie
 
 ---
