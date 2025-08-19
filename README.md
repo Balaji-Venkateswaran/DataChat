@@ -76,20 +76,20 @@ If you see a version (e.g., Python 3.12.x), continue.
 If not installed -----> Download & Install min Python 3.x. (https://www.python.org/downloads/)
 
 **Step 5:**
-## Install dependencies:
+### Install dependencies:
 cd Datachat/dataserverapp
 pip install -r requirements.txt
 pip install matplotlib
 pip install duckdb
 
 **Step 6:**
-## Run the server:
+### Run the server:
 cd Datachat/dataserverapp  ( cmd path should be in this dir)
 run.bat else just type run  only, it start the server
 If everything is fine, the terminal will show the server running URL & port 
 
 **Step 7:**
-## Run the Client
+### Run the Client
 Navigate to the client app directory:
 CMD: cd Datachat/dataclientapp/app/html
 
