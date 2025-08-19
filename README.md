@@ -1,4 +1,4 @@
-#Data Chat – Smart Data Query & Visualization Assistant
+# 📊 Data Chat – Smart Data Query & Visualization Assistant
 _______________________________________________________
 **Data Chat** is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results
 ---
