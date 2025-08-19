@@ -23,15 +23,22 @@ Natural Language Interface: Ask data-related questions in plain English—e.g., 
 LLM-Powered Query Engine: Uses lightweight LLMs (GPT-4.1-nano, o4-mini, Gemini Flash, etc.) to interpret queries, build logic, and generate optimized SQL queries.
 
 Detailed Analytical Feedback: Each query returns:
+
 A plain-English explanation of your question
+
 Logical steps and analysis used to derive the result
+
 Relevant table relationships
+
 Auto-generated SQL query
+
 JavaScript (Chart.js) code for visualization
 
 Dynamic Table View & Export:
 View results in a responsive, interactive table
+
 Export the results as a .csv file
+
 Copy or download the generated SQL query
 
 Built-In Chart Visualizations: Automatically render charts using Chart.js, including:
@@ -41,7 +48,9 @@ Bar, Line and Pie
 ## Prerequisites
 
 A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
+
 Download & Install min Python 3.x. (https://www.python.org/downloads/)
+
 `git` installed on your system to clone the repository.
 
 ---
