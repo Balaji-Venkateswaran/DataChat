@@ -1,8 +1,8 @@
 # Data Chat – Smart Data Query & Visualization Assistant
-Data Chat is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results
+**Data Chat** is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results
 ---
 ## About The Project
-Data Chat is an intuitive, browser-based tool that allows users to upload datasets in CSV, Excel, or SQLite format and explore them without any coding. Users can ask questions in plain English, and the tool automatically generates SQL queries, displays results in tables, and creates interactive visualizations. All data processing happens on the client side, ensuring privacy and speed. Results can be easily downloaded for further use.
+**Data Chat** is an intuitive, browser-based tool that allows users to upload datasets in CSV, Excel, or SQLite format and explore them without any coding. Users can ask questions in plain English, and the tool automatically generates SQL queries, displays results in tables, and creates interactive visualizations. All data processing happens on the client side, ensuring privacy and speed. Results can be easily downloaded for further use.
 ---
 ## Features
 Client-Side Execution Only: Fully frontend-powered using Vanilla JavaScript—no server, backend, or data upload required for processing.
