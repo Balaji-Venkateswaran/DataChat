@@ -1,16 +1,14 @@
 # Data Chat – Smart Data Query & Visualization Assistant
 
-**Data Chat** is an interactive data query tool that empowers users to explore datasets, generate SQL queries, derive insights, and visualize results. 
+**Data Chat** is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results. 
 
 ---
-## About The Project
+## About the Project
 
-**Data Chat** is an intuitive, browser-based tool that allows users to upload datasets in CSV, Excel, or SQLite format and explore them without any coding. Users can ask questions in plain English, and the tool automatically generates SQL queries, displays results in tables, and creates interactive visualizations. All data processing happens on the client side, ensuring privacy and speed. Results can be easily downloaded for further use.
+**Data Chat** is an interactive data query tool that empowers users to explore datasets, generate SQL queries, derive insights, and Visualize results. Users can upload files and instantly interact with the data through smart question suggestions and real-time table previews. Built in Python, the system uses LangChain to orchestrate LLM models like Gemini 2.5 Flash and Gemini 1.5 Flash, enabling intelligent SQL query generation, actionable insights, and dynamic chart visualizations. The application integrates **CloudDB (Supabase)** for persistent storage of user accounts, file metadata, chat history, and saved queries, while **DuckDB (Standalone)** provides high performance, in-memory or local file–based analytics execution. This hybrid architecture allows for both long-term data retention in the cloud and ultra-fast query execution locally.
 
 ---
 ## Features
-
-Client-Side Execution Only: Fully frontend-powered using Vanilla JavaScript.
 
 Multi-Format File Support: Easily upload and analyze datasets in .csv, .xlsx, .sqlite3, or .db formats.
 
