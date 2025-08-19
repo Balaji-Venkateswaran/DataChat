@@ -36,7 +36,7 @@ Copy or download the generated SQL query
 
 Built-In Chart Visualizations: Automatically render charts using Chart.js, including:
 Bar, Line and Pie
-Downloadable JavaScript chart code for reuse or modification
+
 ---
 ## Prerequisites
 
@@ -93,17 +93,19 @@ If everything is fine, the terminal will show the server running URL & port
 Navigate to the client app directory:
 CMD: cd Datachat/dataclientapp/app/html
 
-Step 8:
+**Step 8:**
 Install VS Code extension ----> Search: Live Server Preview.
 
-Step 9:
+**Step 9:**
 Right-click on index.html -----> select Open with Live Server Preview.
 
-Step 10:
+**Step 10:**
 Upload a file and start using the client.
+
 ---
 ## Note
-Temporarily turn off Kaspersky antivirus if it blocks the server or client connection.
 
+Temporarily turn off Kaspersky antivirus if it blocks the server or client connection.
 If everything is fine, you’ll see the server running URL & port 
+
 ---
