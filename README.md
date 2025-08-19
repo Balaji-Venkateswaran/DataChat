@@ -73,13 +73,17 @@ Verify Python is installed:
 CMD: python -V
 Next:
 If you see a version (e.g., Python 3.12.x), continue.
+
 If not installed -----> Download & Install min Python 3.x. (https://www.python.org/downloads/)
 
 **Step 5:**
 #### Install dependencies:
 cd Datachat/dataserverapp
+
 pip install -r requirements.txt
+
 pip install matplotlib
+
 pip install duckdb
 
 **Step 6:**
@@ -92,7 +96,7 @@ If everything is fine, the terminal will show the server running URL & port
 
 **Step 7:**
 #### Run the Client
-Navigate to the client app directory:
+Navigate to the client app directory: 
 CMD: cd Datachat/dataclientapp/app/html
 
 **Step 8:**
@@ -108,6 +112,7 @@ Upload a file and start using the client.
 ## Note
 
 Temporarily turn off Kaspersky antivirus if it blocks the server or client connection.
+
 If everything is fine, you’ll see the server running URL & port 
 
 ---
