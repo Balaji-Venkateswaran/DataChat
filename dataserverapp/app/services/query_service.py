@@ -5,7 +5,6 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 import pandas as pd
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain.vectorstores.supabase import SupabaseVectorStore
 from dotenv import load_dotenv
 from supabase import create_client
 import re
@@ -18,7 +17,10 @@ from io import StringIO
 import matplotlib.pyplot as plt
 from typing import Any, Dict, List
 from pydantic import BaseModel
-from langchain.vectorstores import DuckDB
+# from langchain.vectorstores.supabase import SupabaseVectorStore
+# from langchain.vectorstores import DuckDB
+from langchain_community.vectorstores import SupabaseVectorStore
+from langchain_community.vectorstores import DuckDB
 import duckdb
 from typing import Optional
 from io import BytesIO
@@ -109,15 +111,11 @@ async def generate_sql_and_table(user_question: str):
         chain = sql_prompt_template | llm | output_parser
         response = chain.invoke({"schema": schema, "question": user_question})        
         # sql_query =response.content.strip("`").strip() #type:ignore
-        # print(f"result is :{response}")
         sql_query = clean_sql_output(response)
-        # print(f"sql_query :{sql_query}")        
         if not sql_query.lower().startswith(("select", "insert", "update", "delete")):
            raise HTTPException(status_code=400, detail="Invalid or unsupported SQL operation.")
-        # print(f"{sql_query}")       
         sql_query= re.sub(r"\bLIKE\b", "ILIKE", sql_query, flags=re.IGNORECASE)     
         result = supabase_client.rpc("run_sql_query", {"sql_text": sql_query}).execute()
-        # print(f"result is {result}")
         if not result.data:
             return {"generated_sql": sql_query, "table_html": "<p>No data found</p>"}
         df = pd.DataFrame(result.data)
@@ -193,10 +191,8 @@ async def generate_sql_and_table_bycontext(user_context: str, user_question: str
             raise HTTPException(status_code=400, detail="Only SELECT queries are allowed.")
 
         sql_query = re.sub(r"\bLIKE\b", "ILIKE", sql_query, flags=re.IGNORECASE)
-        # print(f"Generated SQL: {sql_query}")
         sql_query = sql_query.replace('\n', ' ')
         result = supabase_client.rpc("run_sql_query_context", {"sql_text": sql_query}).execute()
-        # print(f"result data is {result.data}")
         if not result.data:
             return {
                 "generated_sql": sql_query,
@@ -285,7 +281,6 @@ def generate_sql_from_question(context: dict, question: str) -> str:
         sql = sql.replace("```sql", "").replace("```", "").strip()
     if "employees" in sql:
        sql = sql.replace("employees", "df")
-    # print(f"Generated SQL query:\n{sql}")
     return sql
 
 def run_sql_query_on_csv(content_text: str, sql: str) -> pd.DataFrame:
@@ -329,69 +324,71 @@ def create_chart_from_dataframe(df: pd.DataFrame, chart_type: str) -> str:
     if df.empty:
         print("DataFrame is empty, cannot generate chart.")
         return ""
+    try:
+        numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+        categorical_cols = df.select_dtypes(exclude=['number']).columns.tolist()
 
-    numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
-    categorical_cols = df.select_dtypes(exclude=['number']).columns.tolist()
+        # Special case: If only categorical data is available, count occurrences of the first column
+        if not numeric_cols and categorical_cols:
+            count_series = df[categorical_cols[0]].value_counts().reset_index()
+            count_series.columns = ['Category', 'Count']
+            df = count_series
+            numeric_cols = ['Count']
+            categorical_cols = ['Category']
+            chart_type = 'bar'  # Force to a bar chart as it's the most appropriate
 
-    # Special case: If only categorical data is available, count occurrences of the first column
-    if not numeric_cols and categorical_cols:
-        count_series = df[categorical_cols[0]].value_counts().reset_index()
-        count_series.columns = ['Category', 'Count']
-        df = count_series
-        numeric_cols = ['Count']
-        categorical_cols = ['Category']
-        chart_type = 'bar'  # Force to a bar chart as it's the most appropriate
-        print(f"No numeric data found. Generating a count-based bar chart on column: {categorical_cols[0]}")
+        # After handling the special case, check again if we have enough data to plot
+        if not numeric_cols or not categorical_cols:
+            print("Not enough suitable columns for a chart, even after counting.")
+            return ""
 
-    # After handling the special case, check again if we have enough data to plot
-    if not numeric_cols or not categorical_cols:
-        print("Not enough suitable columns for a chart, even after counting.")
-        return ""
+        labels_col = categorical_cols[0]
+        data_col = numeric_cols[0]
 
-    labels_col = categorical_cols[0]
-    data_col = numeric_cols[0]
+    
+        plt.clf()
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-   
-    plt.clf()
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    if chart_type == 'bar':
-        # ... (your existing bar chart code, which is fine as is for this case)
-        if len(df[labels_col]) > 20:
-            df = df.sort_values(by=data_col, ascending=False).head(20)
-        ax.bar(df[labels_col], df[data_col])
-        ax.set_ylabel(data_col)
-        ax.set_xlabel(labels_col)
-        ax.set_title(f"Count of {labels_col}")
-        plt.xticks(rotation=45, ha='right')
-    elif chart_type == 'line':
-        # ... (your line chart code)
-        ax.plot(df[labels_col], df[data_col], marker='o')
-        ax.set_ylabel(data_col)
-        ax.set_xlabel(labels_col)
-        ax.set_title(f"{chart_type.capitalize()} Chart: {data_col} by {labels_col}")
-        plt.xticks(rotation=45, ha='right')
-    elif chart_type == 'pie':
-        # ... (your pie chart code)
-        if len(df[labels_col]) > 10:
-            df_sorted = df.sort_values(by=data_col, ascending=False).head(10)
-            labels = df_sorted[labels_col].tolist()
-            data = df_sorted[data_col].tolist()
+        if chart_type == 'bar':
+            # ... (your existing bar chart code, which is fine as is for this case)
+            if len(df[labels_col]) > 20:
+                df = df.sort_values(by=data_col, ascending=False).head(20)
+            ax.bar(df[labels_col], df[data_col])
+            ax.set_ylabel(data_col)
+            ax.set_xlabel(labels_col)
+            ax.set_title(f"Count of {labels_col}")
+            plt.xticks(rotation=45, ha='right')
+        elif chart_type == 'line':
+            # ... (your line chart code)
+            ax.plot(df[labels_col], df[data_col], marker='o')
+            ax.set_ylabel(data_col)
+            ax.set_xlabel(labels_col)
+            ax.set_title(f"{chart_type.capitalize()} Chart: {data_col} by {labels_col}")
+            plt.xticks(rotation=45, ha='right')
+        elif chart_type == 'pie':
+            # ... (your pie chart code)
+            if len(df[labels_col]) > 10:
+                df_sorted = df.sort_values(by=data_col, ascending=False).head(10)
+                labels = df_sorted[labels_col].tolist()
+                data = df_sorted[data_col].tolist()
+            else:
+                labels = df[labels_col].tolist()
+                data = df[data_col].tolist()
+            ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=90)
+            ax.axis('equal')
+            ax.set_title(f"Distribution by {labels_col}")
         else:
-            labels = df[labels_col].tolist()
-            data = df[data_col].tolist()
-        ax.pie(data, labels=labels, autopct='%1.1f%%', startangle=90)
-        ax.axis('equal')
-        ax.set_title(f"Distribution by {labels_col}")
-    else:
-        print(f"Unsupported chart type: {chart_type}")
-        return ""
+            print(f"Unsupported chart type: {chart_type}")
+            return ""
 
-    plt.tight_layout()
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    chart_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        plt.tight_layout()
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
+        buffer.seek(0)
+        chart_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    except Exception as e:
+         return str(e)
+        
     return chart_base64
 
 def process_question_and_query_by_context_and_question(context: str, question: str, chart_type: str = "bar") -> dict:
@@ -419,16 +416,22 @@ class QueryRequestDuck(BaseModel):
     # sqltext: Optional[str] = None
     question: str 
     chart_type: Optional[str] = None 
+    selected_llm_model : Optional[str] = None
+    
     
 async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
     try:
         chart_type ="bar"
         question = payload.question
-      
+        selected_llm_model = payload.selected_llm_model if payload.selected_llm_model else 'gemini-2.5-flash'
         vs = DuckDB(
             embedding=embedding,
             connection=duckdb_connection,
             table_name=EMBED_TABLE,
+        )
+        llm = ChatGoogleGenerativeAI(
+                model=selected_llm_model,
+                temperature=0.2
         )
 
         docs = vs.similarity_search(question, k=3)
@@ -453,7 +456,6 @@ async def getdata_from_duckdb(payload: QueryRequestDuck) -> Dict[str, Any]:
         if "```" in sql_query:
             sql_query = sql_query.replace("```sql", "").replace("```", "").replace("```python", "").strip()
 
-        print(f"[Generated SQL] {sql_query}")       
         con = duckdb.connect(DUCKDB_PATH)
         result_df = con.execute(sql_query).fetchdf()
         

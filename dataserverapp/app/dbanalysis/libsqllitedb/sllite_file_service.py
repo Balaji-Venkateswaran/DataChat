@@ -19,14 +19,12 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY not set in .env file.")
 os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
-print(f" upload dir{GOOGLE_API_KEY}")
 embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     temperature=0.2
 )
 async def save_upload_file(file: UploadFile) -> str:
-    print(f" upload dir{UPLOAD_DIR}")
     file_path = os.path.join(UPLOAD_DIR, file.filename) # type:ignore
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
@@ -37,7 +35,6 @@ async def save_upload_file_and_store(file: UploadFile):
     if file_ext not in [".csv", ".xlsx", ".db"]:
         raise HTTPException(status_code=400, detail="Only .csv, .xlsx, and .db files are supported.")
     file_path = await save_upload_file(file)   
-    print(f"file path is : {file_ext}")
     try:
         if file_ext == ".csv":
             df = pd.read_csv(file_path)
