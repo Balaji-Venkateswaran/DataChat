@@ -18,7 +18,7 @@ Smart Question Suggestions: Automatically suggests relevant and insightful quest
 
 Natural Language Interface: Ask data-related questions in plain English—e.g., “What was the average profit in 2022?”—and receive precise, structured responses.
 
-LLM-Powered Query Engine: Uses lightweight LLMs (GPT-4.1-nano, o4-mini, Gemini Flash, etc.) to interpret queries, build logic, and generate optimized SQL queries.
+LLM-Powered Query Engine: Uses lightweight LLMs (Gemini Flash) to interpret queries, build logic, and generate optimized SQL queries.
 
 Detailed Analytical Feedback: Each query returns:
 
@@ -77,7 +77,7 @@ Open a terminal (VS Code Terminal or Command Prompt).
 Navigate to the server directory:
 CMD: 
 ```sh 
-cd Datachat/dataserverapp 
+D:\Projects\DataChat\dataserverapp>
 ```
 
 **Step 4:**
@@ -105,12 +105,8 @@ pip install duckdb
 #### Run the server:
 CMD: 
 ```sh
-cd Datachat/dataserverapp 
+D:\Projects\DataChat\dataserverapp> run.bat
 ```
-CMD:
-```sh
-run.bat
-``` 
 
 **run.bat** else just type **run**  only, it start the server
 
@@ -121,12 +117,14 @@ If everything is fine, the terminal will show the server running URL & port
 Navigate to the client app directory: 
 CMD: 
 ```sh 
-cd Datachat/dataclientapp/app/html
+D:\Projects\DataChat\dataclientapp/app/html
 ```
 
 **Step 8:**
 Install VS Code extension ----> Search: Live Server Preview.
+
 Or
+
 To view the file, open ```index.html``` in a web browser or double-click it.
 
 **Step 9:**
