@@ -117,7 +117,7 @@ If everything is fine, the terminal will show the server running URL & port
 Navigate to the client app directory: 
 CMD: 
 ```sh 
-D:\Projects\DataChat\dataclientapp/app/html
+D:\Projects\DataChat\dataclientapp\app\html
 ```
 
 **Step 8:**
