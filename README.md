@@ -95,7 +95,7 @@ https://www.python.org/downloads/
 #### Install dependencies:
 cd Datachat/dataserverapp
 ```sh
-pip install -r requirements.txt
+pip install -r requirement.txt
 
 pip install matplotlib
 
@@ -108,7 +108,7 @@ CMD:
 cd Datachat/dataserverapp 
 ``` 
 
-run.bat else just type run  only, it start the server
+**run.bat** else just type **run**  only, it start the server
 
 If everything is fine, the terminal will show the server running URL & port 
 
