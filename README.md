@@ -94,7 +94,7 @@ https://www.python.org/downloads/
 **Step 5:**
 #### Install dependencies:
 ```sh
-cd D:\Projects\DataCha\dataserverapp
+cd D:\Projects\DataChat\dataserverapp
 
 pip install -r requirement.txt
 
