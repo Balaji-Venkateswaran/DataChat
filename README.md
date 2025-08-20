@@ -111,8 +111,12 @@ cd D:\Projects\DataChat\dataserverapp> run.bat
 
 **run.bat** else just type **run**  only, it start the server
 
-If everything is fine, the terminal will show the server running URL & port 
+If the server environment is not working properly, follow the steps in the readme file.
+```
+D:\Projects\DataChat\dataserverapp\readme
+```
 
+If everything is fine, the terminal will show the server running URL & port 
 **Step 7:**
 #### Run the Client
 Navigate to the client app directory: 
