@@ -77,7 +77,7 @@ Open a terminal (VS Code Terminal or Command Prompt).
 Navigate to the server directory:
 CMD: 
 ```sh 
-D:\Projects\DataChat\dataserverapp>
+cd D:\Projects\DataChat\dataserverapp>
 ```
 
 **Step 4:**
@@ -93,8 +93,9 @@ https://www.python.org/downloads/
 
 **Step 5:**
 #### Install dependencies:
-cd Datachat/dataserverapp
 ```sh
+cd D:\Projects\DataCha\dataserverapp
+
 pip install -r requirement.txt
 
 pip install matplotlib
@@ -105,7 +106,7 @@ pip install duckdb
 #### Run the server:
 CMD: 
 ```sh
-D:\Projects\DataChat\dataserverapp> run.bat
+cd D:\Projects\DataChat\dataserverapp> run.bat
 ```
 
 **run.bat** else just type **run**  only, it start the server
@@ -117,7 +118,7 @@ If everything is fine, the terminal will show the server running URL & port
 Navigate to the client app directory: 
 CMD: 
 ```sh 
-D:\Projects\DataChat\dataclientapp\app\html
+cd D:\Projects\DataChat\dataclientapp\app\html
 ```
 
 **Step 8:**
