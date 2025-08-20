@@ -106,6 +106,10 @@ pip install duckdb
 CMD: 
 ```sh
 cd Datachat/dataserverapp 
+```
+CMD:
+```sh
+run.bat
 ``` 
 
 **run.bat** else just type **run**  only, it start the server
@@ -122,6 +126,8 @@ cd Datachat/dataclientapp/app/html
 
 **Step 8:**
 Install VS Code extension ----> Search: Live Server Preview.
+Or
+To view the file, open ```index.html``` in a web browser or double-click it.
 
 **Step 9:**
 Right-click on index.html -----> select Open with Live Server Preview.
