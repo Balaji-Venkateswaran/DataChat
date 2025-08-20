@@ -83,7 +83,7 @@ Step 5:
 Install dependencies:
 ___________________
 cd Datachat/dataserverapp
-pip install -r requirements.txt
+pip install -r requirement.txt
 pip install matplotlib
 pip install duckdb
 
