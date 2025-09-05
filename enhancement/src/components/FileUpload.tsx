@@ -1,187 +1,92 @@
-// import * as React from 'react';
-// import { styled } from '@mui/material/styles';
-// import Button from '@mui/material/Button';
-// import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import React, { useRef, useState, useEffect, JSX } from "react";
+import { IconButton, Box, Typography } from "@mui/material";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
-// const VisuallyHiddenInput = styled('input')({
-//   clip: 'rect(0 0 0 0)',
-//   clipPath: 'inset(50%)',
-//   height: 1,
-//   overflow: 'hidden',
-//   position: 'absolute',
-//   bottom: 0,
-//   left: 0,
-//   whiteSpace: 'nowrap',
-//   width: 1,
-// });
-//  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const file = event.target.files && event.target.files[0];
-//     console.log("Uploaded file:", file);
-//   };
+export default function FileUpload(): JSX.Element {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-// export default function  FileUpload() {
-//   return (
-//     <Button
-//       component="label"
-//       role={undefined}
-//       variant="contained"
-//       tabIndex={-1}
-//       startIcon={<CloudUploadIcon />}
-//     >
-//       Upload files
-//       <VisuallyHiddenInput
-//         type="file"
-//           onChange={handleFileUpload}
-
-//         multiple
-//       />
-//     </Button>
-//   );
-// }
-
-import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Button from "@mui/material/Button";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import * as XLSX from "xlsx";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-} from "@mui/material";
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
-
-interface SchemaRow {
-  column: string;
-  type: "TEXT" | "NUMBER";
-  default: string;
-  PK: "YES" | "NO";
-  Not_Null: "YES" | "NO";
-}
-
-export default function FileUpload() {
-  const [schema, setSchema] = React.useState<SchemaRow[]>([]);
-
-  const inferType = (values: any[]): "TEXT" | "NUMBER" => {
-    let numberCount = 0;
-    let textCount = 0;
-
-    for (const value of values) {
-      if (value === null || value === undefined || value === "") continue;
-      if (!isNaN(value as number)) numberCount++;
-      else textCount++;
-    }
-
-    return numberCount >= textCount ? "NUMBER" : "TEXT";
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const ab = e.target?.result;
-      const workbook = XLSX.read(ab, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: null });
-
-      if (jsonData.length === 0) return;
-
-      const columns = Object.keys(jsonData[0] as object);
-      const schemaData: SchemaRow[] = columns.map((col) => {
-        const values = jsonData.map((row: any) => row[col]);
-        const type = inferType(values);
-        return {
-          column: col,
-          type,
-          default: "Null",
-          PK: "NO",
-          Not_Null: "NO",
-        };
-      });
-
-      setSchema(schemaData);
-    };
-
-    reader.readAsBinaryString(file);
+    if (file) {
+      console.log("Selected file:", file);
+    }
   };
+
+  const handleDrop = (event: DragEvent) => {
+    event.preventDefault();
+    setIsDragging(false);
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      console.log("Dropped file:", file);
+    }
+  };
+
+  const handleDragOver = (event: DragEvent) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: DragEvent) => {
+    if (event.relatedTarget === null) {
+      setIsDragging(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("dragover", handleDragOver);
+    window.addEventListener("dragleave", handleDragLeave);
+    window.addEventListener("drop", handleDrop);
+
+    return () => {
+      window.removeEventListener("dragover", handleDragOver);
+      window.removeEventListener("dragleave", handleDragLeave);
+      window.removeEventListener("drop", handleDrop);
+    };
+  }, []);
 
   return (
     <>
-      <Button
-        component="label"
-        variant="contained"
-        startIcon={<CloudUploadIcon />}
-      >
-        Upload File
-        <VisuallyHiddenInput
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={handleFileUpload}
-        />
-      </Button>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        multiple
+      />
 
-      {schema.length > 0 && (
-        <>
-          <Typography variant="h6" sx={{ mt: 4 }}>
-            Table :
+      {isDragging && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.1)",
+            border: "2px dashed #aaa",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <Typography variant="h6" color="textSecondary">
+            Drop file to upload
           </Typography>
-          <TableContainer component={Paper} sx={{ mt: 2 }}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <strong>Column</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Type</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Default</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>PK</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Not_Null</strong>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {schema.map((row, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>{row.column}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell>{row.default}</TableCell>
-                    <TableCell>{row.PK}</TableCell>
-                    <TableCell>{row.Not_Null}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
+        </Box>
       )}
+
+      <Box>
+        <IconButton onClick={handleButtonClick} size="large">
+          <AttachFileIcon />
+        </IconButton>
+      </Box>
     </>
   );
 }

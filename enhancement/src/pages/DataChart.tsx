@@ -1,9 +1,9 @@
-import  FileUpload  from "../components/FileUpload";
+import AskAnythingBar from "../components/AskAnythingBar";
 
 export function DataChart() {
   return (
     <>
-      <FileUpload />
+      <AskAnythingBar />
     </>
   );
 }
