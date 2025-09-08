@@ -17,6 +17,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 # from langchain.vectorstores.utils import DistanceStrategy
 from langchain_community.vectorstores import DuckDB
 from langchain_community.vectorstores.utils import DistanceStrategy
+from typing import List
 
 #/.Config
 UPLOAD_DIR = "uploads"
@@ -45,6 +46,7 @@ DUCKDB_PATH = "employee_data.duckdb"
 TABLE_NAME = "employee_data"
 EMBED_TABLE = "employee_embeddings"
 duckdb_connection = duckdb.connect(DUCKDB_PATH,read_only=False)
+# duckdb_connection = conn = duckdb.connect(":memory:")
 #./
 #/.File upload
 async def save_upload_file(file: UploadFile) -> str:
@@ -219,7 +221,7 @@ async def save_upload_file_and_store_context(file: UploadFile) -> Any:
 
 #./ File Upload with context and questions
 
-#/. Upload file to Duckdb and Generate Query */    
+#/. Upload single file  to Duckdb and Generate Query */    
 async def upload_file_store_duckdb(file: UploadFile):
     try:      
         file_path = os.path.join(UPLOAD_DIR, file.filename)  # type: ignore
@@ -285,6 +287,89 @@ async def upload_file_store_duckdb(file: UploadFile):
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
 #/. Upload file to Duckdb and Generate Query
+
+
+#/. Upload muiti file to Duckdb and Generate Query */    
+async def upload_multi_file_store_duckdb(files: List[UploadFile]):
+   
+    combined_df = pd.DataFrame()
+    
+    for file in files:
+        try:
+            file_path = UPLOAD_DIR / file.filename # type: ignore
+            print("File Path",file_path)
+            with open(file_path, "wb") as f:
+                shutil.copyfileobj(file.file, f)
+
+            # Detect file type
+            ext = file.filename.split(".")[-1].lower() # type: ignore
+            if ext == "csv":
+                df = pd.read_csv(file_path)
+            elif ext in ["xls", "xlsx"]:
+                df = pd.read_excel(file_path)
+            else:
+                raise HTTPException(status_code=400, detail=f"Unsupported file type: {file.filename}")
+
+            combined_df = pd.concat([combined_df, df], ignore_index=True)
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to process {file.filename}: {str(e)}")
+
+    existing_tables = duckdb_connection.execute("SHOW TABLES").fetchall()
+    table_names = [t[0] for t in existing_tables]
+    if TABLE_NAME in table_names:
+        duckdb_connection.execute(f"DROP TABLE {TABLE_NAME}")
+    if EMBED_TABLE in table_names:
+        duckdb_connection.execute(f"DROP TABLE {EMBED_TABLE}")
+
+    duckdb_connection.register("df_view", combined_df)
+    duckdb_connection.execute(f"CREATE TABLE {TABLE_NAME} AS SELECT * FROM df_view")
+    columns = combined_df.columns.tolist()
+    types = combined_df.dtypes.astype(str).tolist()
+    sample = json.loads(combined_df.head(3).to_json(orient="records", date_format="iso"))
+
+    prompt = (
+        "You are a data analyst. Based on the dataset schema and sample rows below, "
+        "generate 5 complex and insightful business-related questions that someone might ask. "
+        "Return only a pure JSON array of question strings. Do not include markdown.\n\n"
+        f"Columns: {columns}\n\n"
+        f"Data Types: {types}\n\n"
+        f"Sample Rows: {sample}"
+    )
+
+    response = llm.invoke(prompt)  # type: ignore
+    content = getattr(response, "content", response).strip()  # type: ignore
+    if "```" in content:
+        content = content.split("```")[1].strip()
+    if content.startswith("```json"):
+        content = content.replace("```json", "").replace("```", "").strip()
+    elif content.startswith("```"):
+        content = content.replace("```", "").strip()
+
+    try:
+        questions = json.loads(content)
+        if not isinstance(questions, list):
+            raise ValueError("Expected a list of questions.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to parse questions as JSON list: {str(e)}")
+
+    text_chunks = [json.dumps(row, default=str) for row in combined_df.to_dict(orient="records")]
+    vectors = embedding.embed_documents(text_chunks)
+    DuckDB.from_texts(
+        texts=text_chunks,
+        embedding=embedding,
+        connection=duckdb_connection,
+        table_name=EMBED_TABLE,
+        distance_strategy=DistanceStrategy.COSINE
+    )
+
+    return {
+        "status": "Upload complete. Data and embeddings stored in DuckDB.",
+        "generated_questions": questions
+    }
+
+#/. Upload muiti file to Duckdb and Generate Query */
+
 
 
 
