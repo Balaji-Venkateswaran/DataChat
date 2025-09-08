@@ -16,7 +16,7 @@ function App() {
     <ThemeContextProvider>
       <section className={isexpand ? "sideBarEnabled" : "sideBarDisabled"}>
         {isexpand && (
-          <div>
+          <div className="sidebar">
             <SideBar />
           </div>
         )}

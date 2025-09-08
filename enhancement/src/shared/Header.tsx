@@ -25,8 +25,8 @@ export function HeaderUpload({ expand }: Props) {
           width: "100%",
         }}
       >
-        <button type="button" onClick={() => setExpand((prev) => !prev)}>
-          {isExpand ? <span>{"<<"}</span> : <span>{">>"}</span>}
+        <button className="expand-button" type="button" onClick={() => setExpand((prev) => !prev)}>
+          {isExpand ? <span>{"◀"}</span> : <span>{"►"}</span>}
         </button>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
