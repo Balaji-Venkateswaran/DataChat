@@ -18,9 +18,13 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from langchain_community.vectorstores import DuckDB
 from langchain_community.vectorstores.utils import DistanceStrategy
 from typing import List
-
+from pathlib import Path
 #/.Config
 UPLOAD_DIR = "uploads"
+# UPLOAD_DIR.mkdir(exist_ok=True)
+UPLOAD_DIR_MULTI = Path("uploadsmulti")
+UPLOAD_DIR_MULTI.mkdir(exist_ok=True)
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '.env')
 load_dotenv(dotenv_path=env_path)
@@ -291,17 +295,18 @@ async def upload_file_store_duckdb(file: UploadFile):
 
 #/. Upload muiti file to Duckdb and Generate Query */    
 async def upload_multi_file_store_duckdb(files: List[UploadFile]):
-   
+  
     combined_df = pd.DataFrame()
-    
+
     for file in files:
         try:
-            file_path = UPLOAD_DIR / file.filename # type: ignore
-            print("File Path",file_path)
+            file_path = UPLOAD_DIR_MULTI / file.filename # type: ignore
+            print("Saving file:", file_path)
+
             with open(file_path, "wb") as f:
                 shutil.copyfileobj(file.file, f)
 
-            # Detect file type
+       
             ext = file.filename.split(".")[-1].lower() # type: ignore
             if ext == "csv":
                 df = pd.read_csv(file_path)
@@ -315,15 +320,20 @@ async def upload_multi_file_store_duckdb(files: List[UploadFile]):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to process {file.filename}: {str(e)}")
 
-    existing_tables = duckdb_connection.execute("SHOW TABLES").fetchall()
-    table_names = [t[0] for t in existing_tables]
-    if TABLE_NAME in table_names:
+    if combined_df.empty:
+        raise HTTPException(status_code=400, detail="No valid data found in uploaded files.")
+
+
+    existing_tables = [t[0] for t in duckdb_connection.execute("SHOW TABLES").fetchall()]
+    if TABLE_NAME in existing_tables:
         duckdb_connection.execute(f"DROP TABLE {TABLE_NAME}")
-    if EMBED_TABLE in table_names:
+    if EMBED_TABLE in existing_tables:
         duckdb_connection.execute(f"DROP TABLE {EMBED_TABLE}")
 
-    duckdb_connection.register("df_view", combined_df)
-    duckdb_connection.execute(f"CREATE TABLE {TABLE_NAME} AS SELECT * FROM df_view")
+
+    duckdb_connection.execute(f"CREATE TABLE {TABLE_NAME} AS SELECT * FROM combined_df")
+
+ 
     columns = combined_df.columns.tolist()
     types = combined_df.dtypes.astype(str).tolist()
     sample = json.loads(combined_df.head(3).to_json(orient="records", date_format="iso"))
@@ -337,24 +347,27 @@ async def upload_multi_file_store_duckdb(files: List[UploadFile]):
         f"Sample Rows: {sample}"
     )
 
-    response = llm.invoke(prompt)  # type: ignore
-    content = getattr(response, "content", response).strip()  # type: ignore
-    if "```" in content:
-        content = content.split("```")[1].strip()
-    if content.startswith("```json"):
-        content = content.replace("```json", "").replace("```", "").strip()
-    elif content.startswith("```"):
-        content = content.replace("```", "").strip()
-
     try:
+        response = llm.invoke(prompt)  # type: ignore
+        content = getattr(response, "content", response).strip() # type: ignore
+
+        if "```" in content:
+            content = content.split("```")[1].strip()
+        if content.startswith("```json"):
+            content = content.replace("```json", "").replace("```", "").strip()
+        elif content.startswith("```"):
+            content = content.replace("```", "").strip()
+
         questions = json.loads(content)
         if not isinstance(questions, list):
             raise ValueError("Expected a list of questions.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to parse questions as JSON list: {str(e)}")
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to parse questions: {str(e)}")
+ 
     text_chunks = [json.dumps(row, default=str) for row in combined_df.to_dict(orient="records")]
     vectors = embedding.embed_documents(text_chunks)
+
     DuckDB.from_texts(
         texts=text_chunks,
         embedding=embedding,

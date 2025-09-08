@@ -45,8 +45,8 @@ async def upload_and_store_duckdb(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
     
-@upload_router.post("/upload_muitifile_and_store_duckdb")
-async def upload_muitifile_and_store_duckdb(files: List[UploadFile] = File(...)):
+@upload_router.post("/upload_multifile_and_store_duckdb")
+async def upload_multifile_and_store_duckdb(files: List[UploadFile] = File(...)):
     """
     Upload multiple files, store them into DuckDB, and generate queries.
     """
@@ -57,5 +57,4 @@ async def upload_muitifile_and_store_duckdb(files: List[UploadFile] = File(...))
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
     
