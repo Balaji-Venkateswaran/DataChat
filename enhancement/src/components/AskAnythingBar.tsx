@@ -7,34 +7,31 @@ import { IsData } from "../shared/IsDataContext";
 import * as XLSX from "xlsx";
 // import initSqlJs, { Database, QueryExecResult } from "sql.js";
 import initSqlJs, { Database, QueryExecResult } from "sql.js/dist/sql-wasm.js";
-interface TableColumn {
-  column: string;
-  type: string;
-  Default: string;
-  PK: string;
-  Not_Null: string;
-}
+import {
+  chatInput,
+  inputQuery,
+  table,
+  TableColumn,
+  TableStructure,
+} from "../constant/model";
 
-interface TableStructure {
-  tableNames: string;
-  tableInfo: TableColumn[];
-}
-
-export default function AskAnythingBar() {
+export default function AskAnythingBar(props: chatInput) {
   const ctx = useContext(IsData);
   const [tableStructure, setStructure] = useState<any[]>([]);
+
   const getFile = async (selectedFile: any) => {
-    console.log("selectedFile", selectedFile);
+    ctx?.setData(true);
     for (let i = 0; i < selectedFile.length; i++) {
       const file = selectedFile[i];
-      // selectedFile = file;
       const fileNameArr = file.name;
       const fileNameExtacter = fileNameArr.split(".");
       const fileName = fileNameExtacter[fileNameExtacter.length - 1];
       switch (fileName) {
         case "db":
           const DBfile = await extractDBfile(file);
-          console.log("Parsed Structure:", DBfile);
+          console.log("Parsed DB:", DBfile);
+          setStructure((prev: any) => [...prev, ...(DBfile as any)]);
+          props.tableStructure(DBfile as table);
           break;
         case "xlsx":
         case "csv":
@@ -42,15 +39,20 @@ export default function AskAnythingBar() {
           const result: any = await extractXlsxFile(file);
           console.log("Parsed Structure:", file);
           setStructure((prev: any) => [...prev, ...result]);
+          props.tableStructure(result as table);
           break;
       }
     }
   };
-  useEffect(() => {
-    console.log("Parsed tableStructure:", tableStructure);
-  }, [tableStructure]);
+
+  const getQuery = (event: HTMLInputElement) => {
+    console.log(event);
+    if (event) {
+      ctx?.setData(true);
+    }
+  };
+
   const extractXlsxFile = (file: any) => {
-    console.log(file);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = function (e: ProgressEvent<FileReader>) {
@@ -74,7 +76,7 @@ export default function AskAnythingBar() {
               header: 1,
             });
 
-            if (jsonData.length < 2) continue; // skip empty sheets
+            if (jsonData.length < 2) continue;
 
             const headers = jsonData[0] as string[];
             const firstRow = jsonData[1];
@@ -98,7 +100,6 @@ export default function AskAnythingBar() {
               tableInfo: schema,
             });
           }
-
           resolve(tableStructure);
         } catch (err) {
           reject(err);
@@ -110,59 +111,57 @@ export default function AskAnythingBar() {
     });
   };
   const extractDBfile = async (file: any) => {
-    console.log("%%%");
-    initSqlJs({
-      // locateFile: (filename: string) => `https://sql.js.org/dist/${filename}`,
-      locateFile: (filename: string) => `./sql-wasm.wasm`,
-    }).then((SQL) => {
-      const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      initSqlJs({
+        locateFile: (filename: string) => `./sql-wasm.wasm`,
+      }).then((SQL) => {
+        const reader = new FileReader();
+        const tableStructure: TableStructure[] = [];
+        reader.onload = function (event: ProgressEvent<FileReader>) {
+          if (!event.target?.result) return;
 
-      reader.onload = function (event: ProgressEvent<FileReader>) {
-        if (!event.target?.result) return;
+          const uInt8Array = new Uint8Array(event.target.result as ArrayBuffer);
+          const db: Database = new SQL.Database(uInt8Array);
 
-        const uInt8Array = new Uint8Array(event.target.result as ArrayBuffer);
-        const db: Database = new SQL.Database(uInt8Array);
+          const result: QueryExecResult[] = db.exec(
+            "SELECT name FROM sqlite_master WHERE type='table';"
+          );
 
-        const result: QueryExecResult[] = db.exec(
-          "SELECT name FROM sqlite_master WHERE type='table';"
-        );
+          if (!result.length) {
+            console.log("No tables found.");
+            return;
+          }
 
-        if (!result.length) {
-          console.log("No tables found.");
-          return;
-        }
+          result.forEach((_, i) => {
+            const tableNames = result[i].values.flat() as string[];
 
-        result.forEach((_, i) => {
-          const tableNames = result[i].values.flat() as string[];
+            tableNames.forEach((table) => {
+              const pragma = db.exec(`PRAGMA table_info(${table});`);
+              const tempArr: TableStructure = {
+                tableNames: table,
+                tableInfo: [],
+              };
 
-          tableNames.forEach((table) => {
-            const pragma = db.exec(`PRAGMA table_info(${table});`);
-            const tempArr: TableStructure = {
-              tableNames: table,
-              tableInfo: [],
-            };
-
-            pragma[0].values.forEach((row: any) => {
-              const [cid, name, type, notnull, dflt_value, pk] = row;
-              tempArr.tableInfo.push({
-                column: String(name),
-                type: String(type),
-                Default: dflt_value ? String(dflt_value) : "Null",
-                PK: pk === 1 ? "1" : "NO",
-                Not_Null: notnull === 1 ? "YES" : "NO",
+              pragma[0].values.forEach((row: any) => {
+                const [cid, name, type, notnull, dflt_value, pk] = row;
+                tempArr.tableInfo.push({
+                  column: String(name),
+                  type: String(type),
+                  Default: dflt_value ? String(dflt_value) : "Null",
+                  PK: pk === 1 ? "1" : "NO",
+                  Not_Null: notnull === 1 ? "YES" : "NO",
+                });
               });
+              console.log(tempArr);
+              tableStructure.push(tempArr);
+              resolve(tableStructure);
             });
-            console.log(tempArr);
-            // tableStructure.push(tempArr);
           });
-        });
-      };
+        };
 
-      reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(file);
+      });
     });
-  };
-  const getQuery = (input: string) => {
-    console.log(input);
   };
 
   return (

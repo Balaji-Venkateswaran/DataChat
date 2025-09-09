@@ -12,3 +12,22 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.tableContainer.noPrompt {
+  height: 100vh; /* full height when no prompt */
+  padding-bottom: 0;
+}
+
+.tableContainer{
+  overflow-y: auto;
+  margin-bottom: 18px;
+  padding-bottom: 80px;
+}
+.promptContainer{
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 50px;
+    height: 80px;
+    width: 100%;
+    background: white;
+}

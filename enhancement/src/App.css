@@ -29,3 +29,10 @@
 .dataChartHaveNoData{
    align-items: center;
 }
+
+.promptHeader{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+}

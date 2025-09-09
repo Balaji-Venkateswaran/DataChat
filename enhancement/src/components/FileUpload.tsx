@@ -17,7 +17,6 @@ export default function FileUpload(props: selectedFile): JSX.Element {
     const file = event.target.files;
     if (file) {
       props.selectedFile(file);
-      ctx?.setData(true);
     }
   };
 
