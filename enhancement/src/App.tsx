@@ -36,7 +36,7 @@ function App() {
             }`}
           >
             <div className="">
-              <DataChart />
+              <DataChart expand={isexpand} />
             </div>
           </div>
         </div>

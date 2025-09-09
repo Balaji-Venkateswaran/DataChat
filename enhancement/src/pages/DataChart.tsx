@@ -1,17 +1,25 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import AskAnythingBar from "../components/AskAnythingBar";
 import { IsData } from "../shared/IsDataContext";
 import { inputQuery, table, TableStructure } from "../constant/model";
 import SchemaTable from "../components/SchemaTable";
 
-export function DataChart() {
+interface property {
+  expand: boolean;
+}
+export function DataChart(props: property) {
   const ctx = useContext(IsData);
   const [isHideHeaderPrompt, setHideHeaderPrompt] = useState<
     boolean | undefined
   >(false);
+  const [isExpand, setExpand] = useState(false);
   useEffect(() => {
     setHideHeaderPrompt(ctx?.data);
   }, [ctx]);
+
+  useMemo(() => {
+    setExpand(props.expand);
+  }, [props.expand]);
 
   const [table, setTable] = useState<table>();
 
@@ -30,7 +38,11 @@ export function DataChart() {
             <SchemaTable schema={table} />
           </div>
         )}
-        <div className={isHideHeaderPrompt ? "promptContainer" : ""}>
+        <div
+          className={`${isHideHeaderPrompt ? "promptContainer" : ""} ${
+            isExpand && isHideHeaderPrompt ? "isExpand" : "isNotExpand"
+          }`}
+        >
           <AskAnythingBar
             property={getFileAndQuery}
             tableStructure={getTable}

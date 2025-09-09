@@ -27,7 +27,13 @@ code {
     bottom: 0px;
     left: 0px;
     right: 50px;
-    height: 80px;
+    height: 112px;
     width: 100%;
     /* background: white; */
+}
+.isExpand{
+  width: 120%;
+}
+.isNotExpand{
+   width: 100%;
 }
