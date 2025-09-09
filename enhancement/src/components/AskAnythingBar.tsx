@@ -187,7 +187,6 @@ export default function AskAnythingBar(props: chatInput) {
         margin: "auto",
       }}
     >
-    
       {uploadedFiles.length > 0 && (
         <Box
           sx={{
@@ -232,9 +231,9 @@ export default function AskAnythingBar(props: chatInput) {
           gap: 1,
         }}
       >
-      <FileUpload selectedFile={(file: File) => getFile(file)} />
-      <SearchButton />
-      <TextArea query={getQuery} />
+        <FileUpload selectedFile={(file: File) => getFile(file)} />
+        <SearchButton />
+        <TextArea query={getQuery} />
       </Box>
     </Paper>
   );

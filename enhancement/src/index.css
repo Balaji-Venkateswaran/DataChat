@@ -13,7 +13,7 @@ code {
     monospace;
 }
 .tableContainer.noPrompt {
-  height: 100vh; /* full height when no prompt */
+  height: 100vh; 
   padding-bottom: 0;
 }
 
@@ -29,7 +29,6 @@ code {
     right: 50px;
     height: 112px;
     width: 100%;
-    /* background: white; */
 }
 .isExpand{
   width: 120%;

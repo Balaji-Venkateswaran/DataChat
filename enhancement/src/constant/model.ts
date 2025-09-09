@@ -22,5 +22,5 @@ export interface TableColumn {
 
 export interface chatInput {
   property: (inputQuery: inputQuery) => void;
-  tableStructure: (property: table) => void;
+  tableStructure: (property: any) => void;
 }

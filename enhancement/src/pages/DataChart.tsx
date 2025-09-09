@@ -21,11 +21,12 @@ export function DataChart(props: property) {
     setExpand(props.expand);
   }, [props.expand]);
 
-  const [table, setTable] = useState<table>();
+  const [table, setTable] = useState<table[]>([]);
 
   function getFileAndQuery(property: inputQuery) {}
-  function getTable(table: table) {
-    setTable(table);
+  function getTable(newData: table[]) {
+    console.log("newData", newData);
+    setTable((prev) => [...prev, ...newData]);
   }
   return (
     <>
