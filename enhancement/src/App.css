@@ -11,6 +11,7 @@
 }
 .dataChartMainContent{
   min-height: 100%;
+  overflow: auto;   
 }
 .dataChartHeader{
       min-height: 8%;
