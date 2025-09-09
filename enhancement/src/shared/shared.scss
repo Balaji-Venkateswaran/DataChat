@@ -6,14 +6,25 @@
   
 }
 
-.expand-button{
-  display:block;
-  border-radius: 100%;
+.sidebar {
+  width: 250px; 
+  height: 100vh; 
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  &.light {
+    background-color: #3c3c50;
+    color: #fff;
+  }
+
+  &.dark {
+    background-color:  #1a1a1b;
+    color: #fff;
+  }
 }
 
-.sidebar{
-  background-color: #212121;
-}
+
 .navbar{
   color: #ffffff;
 }

@@ -1,43 +1,73 @@
 import React, { useRef, useState, useEffect, JSX, useContext } from "react";
-import { IconButton, Box, Typography } from "@mui/material";
+import { IconButton, Box } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { Snackbar, Alert } from "@mui/material";
 import { IsData } from "../shared/IsDataContext";
+interface FileUploadProps {
+  onFileUpload: (file: File) => void;
+}
 interface selectedFile {
   selectedFile: (file: any) => void;
 }
+
 export default function FileUpload(props: selectedFile): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const ctx = useContext(IsData);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+   const ctx = useContext(IsData);
+  const showError = (message: string) => {
+    setErrorMessage(message);
+    setOpenSnackbar(true);
+  };
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files;
-    if (file) {
-      props.selectedFile(file);
+    const files = event.target.files;
+    if (files) {
+      props.selectedFile(files);
+      // Array.from(files).forEach((file) => {
+      //   if (isValidFileType(file)) {
+      //     onFileUpload(file);
+      //   } else {
+      //     showError(`File type not allowed: ${file.name}`);
+      //   }
+      // });
     }
   };
 
   const handleDrop = (event: DragEvent) => {
     event.preventDefault();
     setIsDragging(false);
-    const file = event.dataTransfer?.files?.[0];
-    if (file) {
-      console.log("Dropped file:", file);
-    }
+    const files = event.dataTransfer?.files;
+    // if (files) {
+    //   Array.from(files).forEach((file) => {
+    //     if (isValidFileType(file)) {
+    //       onFileUpload(file);
+    //     } else {
+    //       showError(`File type not allowed: ${file.name}`);
+    //     }
+    //   });
+    // }
+  };
+
+  const isValidFileType = (file: File): boolean => {
+    const allowedExtensions = [".csv", ".xls", ".xlsx", ".db"];
+    const fileName = file.name.toLowerCase();
+    return allowedExtensions.some((ext) => fileName.endsWith(ext));
   };
 
   const handleDragOver = (event: DragEvent) => {
-    event.preventDefault();
-    setIsDragging(true);
+    if (event.dataTransfer?.types.includes("Files")) {
+      event.preventDefault();
+      setIsDragging(true);
+    }
   };
 
   const handleDragLeave = (event: DragEvent) => {
-    if (event.relatedTarget === null) {
-      setIsDragging(false);
-    }
+    setIsDragging(false);
   };
 
   useEffect(() => {
@@ -59,6 +89,7 @@ export default function FileUpload(props: selectedFile): JSX.Element {
         ref={fileInputRef}
         style={{ display: "none" }}
         onChange={handleFileChange}
+        accept=".csv, .xls, .xlsx, .db"
         multiple
       />
 
@@ -79,17 +110,32 @@ export default function FileUpload(props: selectedFile): JSX.Element {
             pointerEvents: "none",
           }}
         >
-          <Typography variant="h6" color="textSecondary">
+          <Box sx={{ backgroundColor: "#fff", p: 2, borderRadius: 1 }}>
             Drop file to upload
-          </Typography>
+            <small>Accepted: .csv, .xls, .xlsx, .db</small>
+          </Box>
         </Box>
       )}
 
       <Box>
-        <IconButton onClick={handleButtonClick} size="large">
+        <IconButton
+          onClick={handleButtonClick}
+          size="large"
+          aria-label="Upload file"
+        >
           <AttachFileIcon />
         </IconButton>
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" onClose={() => setOpenSnackbar(false)}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

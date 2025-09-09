@@ -32,7 +32,7 @@ export default function TextArea(props: query) {
   return (
     <InputBase
       sx={{ ml: 2, flex: 1 }}
-      placeholder="Enter your question here..."
+      placeholder="Enter your question here....."
       inputProps={{ "aria-label": "ask anything" }}
       onChange={debouncedGetQuery}
       onKeyDown={handleKeyDown}
