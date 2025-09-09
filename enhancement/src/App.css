@@ -9,3 +9,23 @@
     grid-template-columns: 2fr;
     height: 100vh;
 }
+.dataChartMainContent{
+  min-height: 100%;
+}
+.dataChartHeader{
+      min-height: 8%;
+}
+
+.dataChartBody{
+    min-height: 92%;
+    display: grid;
+
+}
+
+.dataChartHaveData{
+    align-items: flex-end;
+    padding-bottom: 18px;
+}
+.dataChartHaveNoData{
+   align-items: center;
+}

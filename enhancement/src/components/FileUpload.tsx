@@ -1,19 +1,23 @@
-import React, { useRef, useState, useEffect, JSX } from "react";
+import React, { useRef, useState, useEffect, JSX, useContext } from "react";
 import { IconButton, Box, Typography } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-
-export default function FileUpload(): JSX.Element {
+import { IsData } from "../shared/IsDataContext";
+interface selectedFile {
+  selectedFile: (file: any) => void;
+}
+export default function FileUpload(props: selectedFile): JSX.Element {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-
+  const ctx = useContext(IsData);
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files;
     if (file) {
-      console.log("Selected file:", file);
+      props.selectedFile(file);
+      ctx?.setData(true);
     }
   };
 
