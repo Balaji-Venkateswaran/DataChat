@@ -38,7 +38,7 @@ export function DataChart(props: property) {
         {isHideHeaderPrompt && (
           <>
             <div className="tableContainer">
-              <SchemaTable schema={table} />
+              {table && <SchemaTable schema={table} />}
             </div>
             <QueryCard title="Sample Query" queryText="SELECT * FROM users;" />
           </>
