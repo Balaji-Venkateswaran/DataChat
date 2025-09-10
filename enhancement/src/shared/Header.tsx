@@ -32,8 +32,6 @@ export function HeaderUpload({ expand }: Props) {
             transition: "transform 0.3s ease",
           }}
         />
-        <div className="headerTitle">Data Chart</div>
-
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Typography
             style={{ cursor: "pointer" }}

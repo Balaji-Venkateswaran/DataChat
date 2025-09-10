@@ -62,12 +62,11 @@ export default function AskAnythingBar(props: chatInput) {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // 👈 needed for file upload
+            "Content-Type": "multipart/form-data",
           },
         }
       );
       console.log(response);
-      // return response.data;
     } catch (error: any) {
       console.error("POST request failed:", error);
       throw error;
@@ -80,10 +79,12 @@ export default function AskAnythingBar(props: chatInput) {
     );
   };
 
-  const getQuery = (event: HTMLInputElement) => {
-    console.log(event);
-    if (event) {
+  const getQuery = (input: string) => {
+    console.log(input);
+    if (input) {
       ctx?.setData(true);
+
+      props.userQuery?.(input);
     }
   };
 
@@ -265,6 +266,3 @@ export default function AskAnythingBar(props: chatInput) {
     </>
   );
 }
-
-
-

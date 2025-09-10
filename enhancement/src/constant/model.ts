@@ -23,4 +23,6 @@ export interface TableColumn {
 export interface chatInput {
   property: (inputQuery: inputQuery) => void;
   tableStructure: (property: any) => void;
+
+  userQuery?: (query: string) => void;
 }

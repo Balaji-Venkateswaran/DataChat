@@ -1,7 +1,7 @@
 import React from "react";
 import { InputBase } from "@mui/material";
 interface query {
-  query: (input: any) => void;
+  query: (input: string) => void;
 }
 
 export default function TextArea(props: query) {
@@ -18,16 +18,21 @@ export default function TextArea(props: query) {
   }
 
   const getQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.query(event);
+    props.query(event.target.value);
   };
 
-  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      props.query(event.currentTarget.value);
+      event.preventDefault();
+      const value = event.currentTarget.value.trim();
+      if (value !== "") {
+        props.query(value);
+        event.currentTarget.value = "";
+      }
     }
-  }
-
+  };
   const debouncedGetQuery = debounce(handleKeyDown, 300);
+
   return (
     <InputBase
       sx={{ ml: 2, flex: 1 }}
