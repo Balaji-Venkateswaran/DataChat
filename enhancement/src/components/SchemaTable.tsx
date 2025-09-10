@@ -8,6 +8,7 @@ import {
   TableCell,
   TableBody,
   Paper,
+  Box,
 } from "@mui/material";
 import { table, TableStructure } from "../constant/model";
 interface SchemaTableProps {
@@ -32,43 +33,45 @@ export default function SchemaTable(props: SchemaTableProps) {
         schema.map((item, i) => {
           return (
             <>
-              <Typography variant="h6" sx={{ mt: 4 }}>
-                Table : {item.tableNames}
-              </Typography>
-              <TableContainer component={Paper} sx={{ mt: 2 }}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>
-                        <strong>Column</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Type</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Default</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>PK</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>Not_Null</strong>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {item?.tableInfo.map((row, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell>{row.column}</TableCell>
-                        <TableCell>{row.type}</TableCell>
-                        <TableCell>{row.Default}</TableCell>
-                        <TableCell>{row.PK ? "Yes" : "No"}</TableCell>
-                        <TableCell>{row.Not_Null ? "Yes" : "No"}</TableCell>
+              <Box sx={{ mt: 8 }}>
+                <Typography variant="h6" sx={{ mt: 4 }}>
+                  Table : {item.tableNames}
+                </Typography>
+                <TableContainer component={Paper} sx={{ mt: 2 }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          <strong>Column</strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>Type</strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>Default</strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>PK</strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>Not_Null</strong>
+                        </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {item?.tableInfo.map((row, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell>{row.column}</TableCell>
+                          <TableCell>{row.type}</TableCell>
+                          <TableCell>{row.Default}</TableCell>
+                          <TableCell>{row.PK ? "Yes" : "No"}</TableCell>
+                          <TableCell>{row.Not_Null ? "Yes" : "No"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
             </>
           );
         })}

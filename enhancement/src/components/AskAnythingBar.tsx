@@ -15,7 +15,6 @@ import {
   TableColumn,
   TableStructure,
 } from "../constant/model";
-import QueryCard from "./QueryCard";
 
 export default function AskAnythingBar(props: chatInput) {
   const ctx = useContext(IsData);
@@ -175,68 +174,69 @@ export default function AskAnythingBar(props: chatInput) {
     });
   };
 
-  return (             
-     <><QueryCard title="Sample Query" queryText="SELECT * FROM users;" /><Paper
-      elevation={3}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        borderRadius: 3,
-        padding: "8px 12px",
-        width: "100%",
-        maxWidth: 800,
-        margin: "auto",
-      }}
-    >
+  return (
+    <>
+      <Paper
+        elevation={3}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          borderRadius: 3,
+          padding: "8px 12px",
+          width: "100%",
+          maxWidth: 800,
+          margin: "auto",
+        }}
+      >
+        {uploadedFiles.length > 0 && (
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1,
+              mb: 1,
+            }}
+          >
+            {uploadedFiles.map((file, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "#5b5b5d",
+                  borderRadius: "12px",
+                  px: 2,
+                  py: 0.5,
+                  color: "white",
+                }}
+              >
+                <Typography variant="body2" sx={{ mr: 1 }}>
+                  {file.name}
+                </Typography>
+                <IconButton
+                  size="small"
+                  sx={{ color: "white", padding: 0 }}
+                  onClick={() => handleRemoveFile(index)}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            ))}
+          </Box>
+        )}
 
-      {uploadedFiles.length > 0 && (
         <Box
           sx={{
             display: "flex",
-            flexWrap: "wrap",
+            alignItems: "center",
             gap: 1,
-            mb: 1,
           }}
         >
-          {uploadedFiles.map((file, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                backgroundColor: "#5b5b5d",
-                borderRadius: "12px",
-                px: 2,
-                py: 0.5,
-                color: "white",
-              }}
-            >
-              <Typography variant="body2" sx={{ mr: 1 }}>
-                {file.name}
-              </Typography>
-              <IconButton
-                size="small"
-                sx={{ color: "white", padding: 0 }}
-                onClick={() => handleRemoveFile(index)}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          ))}
+          <FileUpload selectedFile={(file: File) => getFile(file)} />
+          <SearchButton />
+          <TextArea query={getQuery} />
         </Box>
-      )}
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <FileUpload selectedFile={(file: File) => getFile(file)} />
-        <SearchButton />
-        <TextArea query={getQuery} />
-      </Box>
-    </Paper></>
+      </Paper>
+    </>
   );
 }

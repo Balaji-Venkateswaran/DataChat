@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -9,30 +9,31 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 .tableContainer.noPrompt {
-  height: 100vh; 
+  height: 100vh;
   padding-bottom: 0;
 }
 
-.tableContainer{
+.tableContainer {
   overflow-y: auto;
   margin-bottom: 18px;
-  padding-bottom: 80px;
+  padding-bottom: 20px;
 }
-.promptContainer{
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    right: 50px;
-    height: 112px;
-    width: 100%;
+.promptContainer {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 50px;
+  height: 112px;
+  width: 100%;
 }
-.isExpand{
+
+.isExpand {
   width: 120%;
 }
-.isNotExpand{
-   width: 100%;
+.isNotExpand {
+  width: 100%;
 }

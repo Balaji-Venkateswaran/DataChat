@@ -13,18 +13,16 @@ const QueryCard: React.FC<QueryCardProps> = ({ title, queryText }) => {
       sx={{
         backgroundColor: "var(--tablenth-bg-color)",
         borderLeft: "4px solid #7e57c2",
-        // padding: "15px",
-        // margin: "20px 30px",
         borderRadius: "8px",
         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
         fontFamily: "monospace",
-        // wordWrap: "break-word",
-        // overflowWrap: "break-word",
+        wordWrap: "break-word",
+        overflowWrap: "break-word",
         padding: "8px 12px",
         width: "100%",
         maxWidth: "800px",
         margin: "auto",
-        marginBottom: "20px",
+        marginBottom: "120px",
       }}
       className="query-card"
     >

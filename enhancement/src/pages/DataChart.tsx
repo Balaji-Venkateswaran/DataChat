@@ -3,6 +3,7 @@ import AskAnythingBar from "../components/AskAnythingBar";
 import { IsData } from "../shared/IsDataContext";
 import { inputQuery, table, TableStructure } from "../constant/model";
 import SchemaTable from "../components/SchemaTable";
+import QueryCard from "../components/QueryCard";
 
 interface property {
   expand: boolean;
@@ -35,9 +36,12 @@ export function DataChart(props: property) {
       )}
       <div className="chatContainer">
         {isHideHeaderPrompt && (
-          <div className="tableContainer">
-            <SchemaTable schema={table} />
-          </div>
+          <>
+            <div className="tableContainer">
+              <SchemaTable schema={table} />
+            </div>
+            <QueryCard title="Sample Query" queryText="SELECT * FROM users;" />
+          </>
         )}
         <div
           className={`${isHideHeaderPrompt ? "promptContainer" : ""} ${
