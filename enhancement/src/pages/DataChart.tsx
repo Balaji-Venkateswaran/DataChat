@@ -31,6 +31,7 @@ export function DataChart(props: property) {
   }
   return (
     <>
+    
       {!isHideHeaderPrompt && (
         <p className="promptHeader">Ready when you are.</p>
       )}

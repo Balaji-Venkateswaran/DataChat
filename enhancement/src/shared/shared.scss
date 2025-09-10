@@ -34,12 +34,12 @@
   margin: auto;
 }
 
-.isNotExpand {
+.sideBarNotExpand {
   width: 98%;
   transition: width 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.isExpand {
+.sideBarExpand {
   width: 77%;
   transition: width 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
@@ -50,4 +50,9 @@
   align-items: center;
   position: fixed;
   top: 2px;
+}
+.headerTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-left: 1rem;
 }

@@ -15,7 +15,6 @@ import {
   TableColumn,
   TableStructure,
 } from "../constant/model";
-import QueryCard from "./QueryCard";
 import axiosInstance from "../helper/httpAxios";
 
 export default function AskAnythingBar(props: chatInput) {
@@ -59,11 +58,11 @@ export default function AskAnythingBar(props: chatInput) {
       const formData = new FormData();
       formData.append("files", selectedFile);
       const response = await axiosInstance.post(
-        "upload_multifile_and_store_duckdb",
+        "/upload_multifile_and_store_duckdb",
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data", // 👈 needed for file upload
           },
         }
       );
@@ -82,23 +81,9 @@ export default function AskAnythingBar(props: chatInput) {
   };
 
   const getQuery = (event: HTMLInputElement) => {
+    console.log(event);
     if (event) {
       ctx?.setData(true);
-      let req = {
-        question: event,
-        chart_type: "bar",
-        selected_llm_model: "gemini-2.5-flash",
-      };
-      try {
-        const response = axiosInstance.post(
-          "getdata_from_duckdb_context/",
-          req
-        );
-        console.log(response);
-      } catch (error: any) {
-        console.error("POST request failed:", error);
-        throw error;
-      }
     }
   };
 
@@ -280,3 +265,6 @@ export default function AskAnythingBar(props: chatInput) {
     </>
   );
 }
+
+
+

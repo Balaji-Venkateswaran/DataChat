@@ -18,7 +18,11 @@ export function HeaderUpload({ expand }: Props) {
 
   return (
     <nav className="header-upload">
-      <div className={`headerDiv ${isExpand ? "isExpand" : "isNotExpand"}`}>
+      <div
+        className={`headerDiv ${
+          isExpand ? "sideBarExpand" : "sideBarNotExpand"
+        }`}
+      >
         <ArrowCircleRightIcon
           className="expand-icon"
           onClick={() => setExpand((prev) => !prev)}
@@ -28,6 +32,7 @@ export function HeaderUpload({ expand }: Props) {
             transition: "transform 0.3s ease",
           }}
         />
+        <div className="headerTitle">Data Chart</div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Typography
