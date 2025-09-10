@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Switch, Typography } from "@mui/material";
 import { ColorModeContext } from "./ThemeContext";
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import "./shared.scss";
 
 interface Props {
@@ -18,14 +18,7 @@ export function HeaderUpload({ expand }: Props) {
 
   return (
     <nav className="header-upload">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
+      <div className={`headerDiv ${isExpand ? "isExpand" : "isNotExpand"}`}>
         <ArrowCircleRightIcon
           className="expand-icon"
           onClick={() => setExpand((prev) => !prev)}
@@ -44,7 +37,6 @@ export function HeaderUpload({ expand }: Props) {
           >
             {mode === "light" ? "🌑" : "🌟"}
           </Typography>
-      
         </div>
       </div>
     </nav>

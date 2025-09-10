@@ -1,37 +1,40 @@
-.sideBarEnabled{
+.sideBarEnabled {
     display: grid;
     grid-template-columns: .5fr 2fr;
     height: 100vh;
 
 }
-.sideBarDisabled{
+
+.sideBarDisabled {
     display: grid;
     grid-template-columns: 2fr;
     height: 100vh;
 }
-.dataChartMainContent{
-  min-height: 100%;
-  overflow: auto;   
-}
-.dataChartHeader{
-      min-height: 8%;
+
+.dataChartMainContent {
+    min-height: 100%;
+    overflow: auto;
 }
 
-.dataChartBody{
+.dataChartHeader {
+    min-height: 8%;
+}
+
+.dataChartBody {
     min-height: 92%;
     display: grid;
-
 }
 
-.dataChartHaveData{
+.dataChartHaveData {
     align-items: flex-end;
     padding-bottom: 18px;
 }
-.dataChartHaveNoData{
-   align-items: center;
+
+.dataChartHaveNoData {
+    align-items: center;
 }
 
-.promptHeader{
+.promptHeader {
     display: flex;
     align-items: center;
     justify-content: center;

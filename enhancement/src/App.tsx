@@ -15,7 +15,6 @@ function App() {
   }
   useEffect(() => {
     setIsMiddle(ctx?.data);
-    console.log("APp", ctx);
   }, [ctx]);
   return (
     <ThemeContextProvider>

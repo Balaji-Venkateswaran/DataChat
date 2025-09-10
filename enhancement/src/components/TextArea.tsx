@@ -23,7 +23,6 @@ export default function TextArea(props: query) {
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
-      console.log("Enter pressed:", event.currentTarget.value);
       props.query(event.currentTarget.value);
     }
   }
