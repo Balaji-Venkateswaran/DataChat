@@ -15,6 +15,8 @@ import {
   TableColumn,
   TableStructure,
 } from "../constant/model";
+import QueryCard from "./QueryCard";
+import axiosInstance from "../helper/httpAxios";
 
 export default function AskAnythingBar(props: chatInput) {
   const ctx = useContext(IsData);
@@ -25,6 +27,8 @@ export default function AskAnythingBar(props: chatInput) {
     ctx?.setData(true);
     setUploadedFiles((prevFiles) => [...prevFiles, ...selectedFile]);
 
+    const responce = sendSelectedFile(selectedFile);
+    console.log(responce);
     for (let i = 0; i < selectedFile.length; i++) {
       const file = selectedFile[i];
       const fileNameArr = file.name;
@@ -48,6 +52,28 @@ export default function AskAnythingBar(props: chatInput) {
       }
     }
   };
+
+  async function sendSelectedFile(selectedFile: any) {
+    console.log(selectedFile);
+    try {
+      const formData = new FormData();
+      formData.append("files", selectedFile);
+      const response = await axiosInstance.post(
+        "/upload_multifile_and_store_duckdb",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // 👈 needed for file upload
+          },
+        }
+      );
+      console.log(response);
+      // return response.data;
+    } catch (error: any) {
+      console.error("POST request failed:", error);
+      throw error;
+    }
+  }
 
   const handleRemoveFile = (indexToRemove: number) => {
     setUploadedFiles((prevFiles) =>

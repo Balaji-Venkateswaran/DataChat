@@ -15,7 +15,7 @@ export default function FileUpload(props: selectedFile): JSX.Element {
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-   const ctx = useContext(IsData);
+  const ctx = useContext(IsData);
   const showError = (message: string) => {
     setErrorMessage(message);
     setOpenSnackbar(true);
@@ -24,73 +24,48 @@ export default function FileUpload(props: selectedFile): JSX.Element {
     fileInputRef.current?.click();
   };
 
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = event.target.files;
-  //   if (files) {
-  //     props.selectedFile(files);
-  //     // Array.from(files).forEach((file) => {
-  //     //   if (isValidFileType(file)) {
-  //     //     onFileUpload(file);
-  //     //   } else {
-  //     //     showError(`File type not allowed: ${file.name}`);
-  //     //   }
-  //     // });
-  //   }
-  // };
-
-  // const handleDrop = (event: DragEvent) => {
-  //   event.preventDefault();
-  //   setIsDragging(false);
-  //   const files = event.dataTransfer?.files;
-  //   // if (files) {
-  //   //   Array.from(files).forEach((file) => {
-  //   //     if (isValidFileType(file)) {
-  //   //       onFileUpload(file);
-  //   //     } else {
-  //   //       showError(`File type not allowed: ${file.name}`);
-  //   //     }
-  //   //   });
-  //   // }
-  // };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const files = event.target.files;
-  if (files) {
-    const validFiles = Array.from(files).filter(isValidFileType);
-    const invalidFiles = Array.from(files).filter(file => !isValidFileType(file));
+    const files = event.target.files;
+    if (files) {
+      const validFiles = Array.from(files).filter(isValidFileType);
+      const invalidFiles = Array.from(files).filter(
+        (file) => !isValidFileType(file)
+      );
 
-    if (invalidFiles.length > 0) {
-      const invalidNames = invalidFiles.map(file => file.name).join(", ");
-      showError(`File type not allowed: ${invalidNames}`);
+      if (invalidFiles.length > 0) {
+        const invalidNames = invalidFiles.map((file) => file.name).join(", ");
+        showError(`File type not allowed: ${invalidNames}`);
+      }
+
+      if (validFiles.length > 0) {
+        props.selectedFile(validFiles);
+      }
+
+      event.target.value = "";
     }
+  };
 
-    if (validFiles.length > 0) {
-      props.selectedFile(validFiles); 
+  const handleDrop = (event: DragEvent) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    const files = event.dataTransfer?.files;
+    if (files) {
+      const validFiles = Array.from(files).filter(isValidFileType);
+      const invalidFiles = Array.from(files).filter(
+        (file) => !isValidFileType(file)
+      );
+
+      if (invalidFiles.length > 0) {
+        const invalidNames = invalidFiles.map((file) => file.name).join(", ");
+        showError(`File type not allowed: ${invalidNames}`);
+      }
+
+      if (validFiles.length > 0) {
+        props.selectedFile(validFiles);
+      }
     }
-
-    event.target.value = ""; 
-  }
-};
-
-const handleDrop = (event: DragEvent) => {
-  event.preventDefault();
-  setIsDragging(false);
-
-  const files = event.dataTransfer?.files;
-  if (files) {
-    const validFiles = Array.from(files).filter(isValidFileType);
-    const invalidFiles = Array.from(files).filter(file => !isValidFileType(file));
-
-    if (invalidFiles.length > 0) {
-      const invalidNames = invalidFiles.map(file => file.name).join(", ");
-      showError(`File type not allowed: ${invalidNames}`);
-    }
-
-    if (validFiles.length > 0) {
-      props.selectedFile(validFiles);
-    }
-  }
-};
-
+  };
 
   const isValidFileType = (file: File): boolean => {
     const allowedExtensions = [".csv", ".xls", ".xlsx", ".db"];
