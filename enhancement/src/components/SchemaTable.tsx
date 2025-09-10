@@ -29,7 +29,7 @@ export default function SchemaTable(props: SchemaTableProps) {
 
   return (
     <>
-      {schema.length &&
+      {schema.length != 0 &&
         schema.map((item, i) => {
           return (
             <>
