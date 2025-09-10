@@ -15,6 +15,7 @@ import {
   TableColumn,
   TableStructure,
 } from "../constant/model";
+import QueryCard from "./QueryCard";
 
 export default function AskAnythingBar(props: chatInput) {
   const ctx = useContext(IsData);
@@ -174,8 +175,8 @@ export default function AskAnythingBar(props: chatInput) {
     });
   };
 
-  return (
-    <Paper
+  return (             
+     <><QueryCard title="Sample Query" queryText="SELECT * FROM users;" /><Paper
       elevation={3}
       sx={{
         display: "flex",
@@ -187,6 +188,7 @@ export default function AskAnythingBar(props: chatInput) {
         margin: "auto",
       }}
     >
+
       {uploadedFiles.length > 0 && (
         <Box
           sx={{
@@ -235,6 +237,6 @@ export default function AskAnythingBar(props: chatInput) {
         <SearchButton />
         <TextArea query={getQuery} />
       </Box>
-    </Paper>
+    </Paper></>
   );
 }
