@@ -1,13 +1,15 @@
 # Data Chat – Smart Data Query & Visualization Assistant
 
-**Data Chat** is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results. 
+**Data Chat** is a simple, client-side tool to upload datasets, ask questions in plain English, and instantly get SQL queries, charts, and downloadable results.
 
 ---
+
 ## About the Project
 
 **Data Chat** is an interactive data query tool that empowers users to explore datasets, generate SQL queries, derive insights, and visualize results. Users can upload files and instantly interact with the data through smart question suggestions and real-time table previews. Built in Python, the system uses LangChain to orchestrate LLM models like Gemini 2.5 Flash and Gemini 1.5 Flash, enabling intelligent SQL query generation, actionable insights, and dynamic chart visualizations. The application relies entirely on **DuckDB (Standalone)** for high-performance, in-memory or local file–based analytics execution. While **CloudDB (Supabase)** was tested for persistent storage of user accounts, file metadata and saved queries.
 
 ---
+
 ## Features
 
 Multi-Format File Support: Easily upload and analyze datasets in .csv, .xlsx, .sqlite3, or .db formats.
@@ -39,32 +41,38 @@ Built-In Chart Visualizations: Automatically render charts using matplotlib, inc
 Bar, Line and Pie
 
 ---
+
 ## Prerequisites
 
 A modern web browser (e.g., Chrome, Firefox, Safari, Edge).
 
-Download & Install min Python 3.x. 
-```sh 
+Download & Install min Python 3.x.
+
+```sh
 https://www.python.org/downloads/
 ```
 
 `git` installed on your system to clone the repository.
 
 ---
+
 ## Clone the Repository
 
 Open your terminal or command prompt and run the following command:
-CMD: 
+CMD:
+
 ```sh
 git clone https://github.com/Balaji-Venkateswaran/DataChat.git
 ```
 
 ---
+
 ## Getting Started
 
 Follow these simple steps to get the tool up and running on your local machine.
 
 ---
+
 ## Run the Server
 
 **Step 1:**
@@ -75,24 +83,28 @@ Open a terminal (VS Code Terminal or Command Prompt).
 
 **Step 3:**
 Navigate to the server directory:
-CMD: 
-```sh 
-cd D:\Projects\DataChat\dataserverapp>
+CMD:
+
+```sh
+D:\Projects\DataChat\dataserverapp>
 ```
 
 **Step 4:**
 Verify Python is installed:
-CMD: ```sh  python -V ```
+CMD: `sh  python -V `
 Next:
 If you see a version (e.g., Python 3.12.x), continue.
 
-If not installed -----> Download & Install min Python 3.x. 
-```sh 
+If not installed -----> Download & Install min Python 3.x.
+
+```sh
 https://www.python.org/downloads/
- ```
+```
 
 **Step 5:**
+
 #### Install dependencies:
+
 ```sh
 cd D:\Projects\DataChat\dataserverapp
 
@@ -102,27 +114,35 @@ pip install matplotlib
 
 pip install duckdb
 ```
+
 **Step 6:**
+
 #### Run the server:
-CMD: 
+
+CMD:
+
 ```sh
-cd D:\Projects\DataChat\dataserverapp> run.bat
+D:\Projects\DataChat\dataserverapp> run.bat
 ```
 
-**run.bat** else just type **run**  only, it start the server
+**run.bat** else just type **run** only, it start the server
 
 If the server environment is not working properly, follow the steps in the readme file.
+
 ```
 D:\Projects\DataChat\dataserverapp\readme
 ```
 
-If everything is fine, the terminal will show the server running URL & port 
+If everything is fine, the terminal will show the server running URL & port
 **Step 7:**
+
 #### Run the Client
-Navigate to the client app directory: 
-CMD: 
-```sh 
-cd D:\Projects\DataChat\dataclientapp\app\html
+
+Navigate to the client app directory:
+CMD:
+
+```sh
+D:\Projects\DataChat\dataclientapp\app\html
 ```
 
 **Step 8:**
@@ -130,7 +150,7 @@ Install VS Code extension ----> Search: Live Server Preview.
 
 Or
 
-To view the file, open ```index.html``` in a web browser or double-click it.
+To view the file, open `index.html` in a web browser or double-click it.
 
 **Step 9:**
 Right-click on index.html -----> select Open with Live Server Preview.
@@ -139,10 +159,11 @@ Right-click on index.html -----> select Open with Live Server Preview.
 Upload a file and start using the client.
 
 ---
+
 ## Note
 
 Temporarily turn off Kaspersky antivirus if it blocks the server or client connection.
 
-If everything is fine, you’ll see the server running URL & port 
+If everything is fine, you’ll see the server running URL & port
 
 ---
