@@ -17,4 +17,4 @@ google.generativeai
 pandasql
 openpyxl
 duckdb 
-python-multipart
+logging
