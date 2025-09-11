@@ -53,18 +53,20 @@ export function DataChart(props: property) {
         "/getdata_from_duckdb_muulti_context",
         request
       );
-      const chatIntex = Object.keys(response).findIndex(
-        (item) => item === "sql"
-      );
-      if (chatIntex != -1) {
-        const responseQuery = {
-          flag: true,
-          content: response?.sql,
-          table_html: response.table_html,
-        };
-        setCardData((prev) => [...prev, responseQuery]);
-      } else {
-        alert("something is wrong");
+      if (await response) {
+        const chatIntex = Object.keys(response).findIndex(
+          (item) => item === "sql"
+        );
+        if (chatIntex != -1) {
+          const responseQuery = {
+            flag: true,
+            content: response?.sql,
+            table_html: response.table_html,
+          };
+          setCardData((prev) => [...prev, responseQuery]);
+        } else {
+          alert("something is wrong");
+        }
       }
     }
   }
