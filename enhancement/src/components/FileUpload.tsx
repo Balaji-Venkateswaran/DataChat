@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, JSX, useContext } from "react";
 import { IconButton, Box } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { Snackbar, Alert } from "@mui/material";
+import ErrorSnackBar from "./ErrorSnackBar";
 import { IsData } from "../shared/IsDataContext";
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -140,16 +140,11 @@ export default function FileUpload(props: selectedFile): JSX.Element {
           <AttachFileIcon />
         </IconButton>
       </Box>
-      <Snackbar
+      <ErrorSnackBar
         open={openSnackbar}
-        autoHideDuration={4000}
+        message={errorMessage || ""}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" onClose={() => setOpenSnackbar(false)}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+      />
     </>
   );
 }

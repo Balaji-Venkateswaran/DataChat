@@ -45,3 +45,10 @@ export interface outputData {
   table_html?: string;
   isChatResponce?: boolean;
 }
+
+export interface ErrorSnackbarProps {
+  open: boolean;
+  message: string;
+  onClose: () => void;
+  duration?: number;
+}

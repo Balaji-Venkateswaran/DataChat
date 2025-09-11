@@ -14,7 +14,7 @@ import UserQueryCard from "../components/UserQueryCard";
 import OutputCard from "../components/OutputCard";
 import axiosInstance from "../helper/httpAxios";
 import StringLoader from "../components/StringLoader";
-
+import ErrorSnackBar from "../components/ErrorSnackBar";
 interface property {
   expand: boolean;
 }
@@ -22,6 +22,14 @@ export function DataChart(props: property) {
   const ctx = useContext(IsData);
   const [outPutCard, setCardData] = useState<outputData[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const showError = (message: string) => {
+    setErrorMessage(message);
+    setOpenSnackbar(true);
+  };
   const [isHideHeaderPrompt, setHideHeaderPrompt] = useState<
     boolean | undefined
   >(false);
@@ -65,7 +73,7 @@ export function DataChart(props: property) {
           };
           setCardData((prev) => [...prev, responseQuery]);
         } else {
-          alert("something is wrong");
+          showError("something is wrong");
         }
       }
     }
@@ -90,7 +98,7 @@ export function DataChart(props: property) {
         setCardData((prev) => [...prev, query]);
       }
     } else {
-      alert("parsing failed try again");
+      showError("parsing failed try again");
     }
   }
 
@@ -103,16 +111,18 @@ export function DataChart(props: property) {
       {!isHideHeaderPrompt && (
         <p className="promptHeader">Ready when you are.</p>
       )}
-      <div className="chatContainer">
-        {isHideHeaderPrompt && (
-          <>
-            <div className="tableContainer">
-              {table && <SchemaTable schema={table} />}
-            </div>
-            <OutputCard data={outPutCard} />
-            {loader && <StringLoader />}
-          </>
-        )}
+      <div className="container">
+        <div className="chatContainer">
+          {isHideHeaderPrompt && (
+            <>
+              <div className="tableContainer">
+                {table && <SchemaTable schema={table} />}
+              </div>
+              <OutputCard data={outPutCard} />
+              {loader && <StringLoader />}
+            </>
+          )}
+        </div>
         <div
           className={`${isHideHeaderPrompt ? "promptContainer" : ""} ${
             isExpand && isHideHeaderPrompt ? "isExpand" : "isNotExpand"
@@ -126,6 +136,12 @@ export function DataChart(props: property) {
           />
         </div>
       </div>
+
+      <ErrorSnackBar
+        open={openSnackbar}
+        message={errorMessage || ""}
+        onClose={() => setOpenSnackbar(false)}
+      />
     </>
   );
 }

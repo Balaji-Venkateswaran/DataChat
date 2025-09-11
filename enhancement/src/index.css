@@ -23,7 +23,7 @@ code {
   padding-bottom: 20px;
 }
 .promptContainer {
-  /* position: fixed; */
+  position: fixed;
   bottom: 0px;
   left: 0px;
   right: 50px;

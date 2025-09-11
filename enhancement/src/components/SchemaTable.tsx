@@ -59,7 +59,7 @@ export default function SchemaTable(props: SchemaTableProps) {
             <Typography variant="h6" sx={{ mt: 4 }}>
               Table : {item.tableNames}
             </Typography>
-            <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <TableContainer component={Paper} sx={{ mb: 2 }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={headerStyle}>
@@ -82,7 +82,10 @@ export default function SchemaTable(props: SchemaTableProps) {
                 </TableHead>
                 <TableBody>
                   {item?.tableInfo.map((row, idx) => (
-                    <TableRow key={idx} sx={{ backgroundColor: getRowBackground(idx) }}>
+                    <TableRow
+                      key={idx}
+                      sx={{ backgroundColor: getRowBackground(idx) }}
+                    >
                       <TableCell>{row.column}</TableCell>
                       <TableCell>{row.type}</TableCell>
                       <TableCell>{row.Default}</TableCell>
