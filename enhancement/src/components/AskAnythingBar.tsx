@@ -25,9 +25,7 @@ export default function AskAnythingBar(props: chatInput) {
   const getFile = async (selectedFile: any) => {
     ctx?.setData(true);
     setUploadedFiles((prevFiles) => [...prevFiles, ...selectedFile]);
-
-    const responce = sendSelectedFile(selectedFile);
-    console.log(responce);
+    sendSelectedFile(selectedFile);
     for (let i = 0; i < selectedFile.length; i++) {
       const file = selectedFile[i];
       const fileNameArr = file.name;
@@ -52,21 +50,18 @@ export default function AskAnythingBar(props: chatInput) {
     }
   };
 
-  async function sendSelectedFile(selectedFile: any) {
-    console.log(selectedFile);
+  async function sendSelectedFile(selectedFiles: any) {
     try {
       const formData = new FormData();
-      formData.append("files", selectedFile);
-      const response = await axiosInstance.post(
+      for (let i = 0; i < selectedFiles.length; i++) {
+        formData.append("files", selectedFiles[i], selectedFiles[i].name);
+      }
+      const response: any = await axiosInstance.post(
         "/upload_multifile_and_store_duckdb",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        formData
       );
-      console.log(response);
+      props.tableQuery?.(response);
+      return response;
     } catch (error: any) {
       console.error("POST request failed:", error);
       throw error;
