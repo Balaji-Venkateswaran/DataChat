@@ -76,9 +76,9 @@ export default function OutputCard(props: outPutCard) {
                   color: isDark ? "#ccc" : "#333",
                 }}
               >
-                {item.chart_image_base64 && (
+                {item.chart_image_base64 != '' && (
                   <DisplayChart
-                    img={`data:image/png;base64,${item.table_html}`}
+                    img={`data:image/png;base64,${item.chart_image_base64}`}
                   />
                 )}
               </Typography>

@@ -155,6 +155,7 @@ export function DataChart(props: property) {
           <div className={`loader ${mode}`}>
           {loader?.loader && <StringLoader text={loader?.text} />}
           </div>
+          
           <AskAnythingBar
             property={getFileAndQuery}
             tableStructure={getTable}
