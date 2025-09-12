@@ -46,3 +46,10 @@ dist/
 uploads/
 database/
 dataserverapp/.env
+
+employee_data.duckdb
+employee_data.duckdb.wal
+
+node_modules/
+
+
