@@ -48,6 +48,7 @@ export interface outputData {
   content?: string[] | string;
   table_html?: string;
   isChatResponce?: boolean;
+  chart_image_base64?: string;
 }
 
 export interface ErrorSnackbarProps {
@@ -58,4 +59,8 @@ export interface ErrorSnackbarProps {
 }
 export interface Loader {
   text: string;
+}
+
+export interface Img {
+  img: string;
 }

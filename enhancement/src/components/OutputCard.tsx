@@ -1,5 +1,5 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import { outPutCard } from "../constant/model";
+import { Img, outPutCard } from "../constant/model";
 
 export default function OutputCard(props: outPutCard) {
   const theme = useTheme();
@@ -67,6 +67,23 @@ export default function OutputCard(props: outPutCard) {
               </Typography>
             </Box>
           )}
+          {item.chart_image_base64 && (
+            <Box key={index} sx={item.flag ? flagTrueStyle : flagFalseStyle}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: "14px",
+                  color: isDark ? "#ccc" : "#333",
+                }}
+              >
+                {item.chart_image_base64 && (
+                  <DisplayChart
+                    img={`data:image/png;base64,${item.table_html}`}
+                  />
+                )}
+              </Typography>
+            </Box>
+          )}
         </>
       ))}
     </>
@@ -89,4 +106,8 @@ function UnpackedElement(props: any) {
 
 function HtmlRenderer({ html }: { html: string }) {
   return <div dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+function DisplayChart(props: Img) {
+  return <img src={props.img} className="canvas" />;
 }

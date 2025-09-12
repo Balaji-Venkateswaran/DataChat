@@ -62,3 +62,12 @@ code {
   66% { content: '..'; }
   100% { content: '...'; }
 }
+
+
+.canvas {
+  display: block;
+  box-sizing: border-box;
+  height: 357px;
+  width: 100%;
+  margin-top: 40px;
+}
