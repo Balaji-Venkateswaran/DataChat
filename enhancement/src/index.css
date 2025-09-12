@@ -42,7 +42,6 @@ code {
 .loader-text {
   display: inline-block;
   font-weight: bold;
-  color: #333;
   animation: blink 1.5s infinite steps(1);
 }
 
@@ -52,7 +51,6 @@ code {
   100% { opacity: 1; }
 }
 
-/* Optional: Dot animation like "Loading..." */
 .loader-dots::after {
   content: '';
   animation: dots 1.5s infinite;

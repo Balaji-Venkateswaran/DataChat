@@ -16,6 +16,8 @@ import OutputCard from "../components/OutputCard";
 import axiosInstance from "../helper/httpAxios";
 import StringLoader from "../components/StringLoader";
 import ErrorSnackBar from "../components/ErrorSnackBar";
+import { ColorModeContext } from "../shared/ThemeContext";
+
 interface property {
   expand: boolean;
 }
@@ -26,6 +28,9 @@ export function DataChart(props: property) {
   const [loaderText, setLoaderText] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+
+    const { mode } = useContext(ColorModeContext);
+  
 
   const showError = (message: string) => {
     setErrorMessage(message);
@@ -147,7 +152,9 @@ export function DataChart(props: property) {
             isExpand && isHideHeaderPrompt ? "isExpand" : "isNotExpand"
           }`}
         >
+          <div className={`loader ${mode}`}>
           {loader?.loader && <StringLoader text={loader?.text} />}
+          </div>
           <AskAnythingBar
             property={getFileAndQuery}
             tableStructure={getTable}
