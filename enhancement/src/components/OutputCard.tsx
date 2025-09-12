@@ -77,9 +77,9 @@ function UnpackedElement(props: any) {
   return Array.isArray(props.data) ? (
     <>
       {props.data.map((item: string, i: number) => (
-        <p key={i}>
+        <div key={i}>
           {i + 1}. {item}
-        </p>
+        </div>
       ))}
     </>
   ) : (

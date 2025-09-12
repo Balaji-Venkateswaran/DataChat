@@ -51,6 +51,10 @@ export default function AskAnythingBar(props: chatInput) {
   };
 
   async function sendSelectedFile(selectedFiles: any) {
+    props.loader?.({
+      loader: true,
+      text: "Analyzing the Doc",
+    });
     try {
       const formData = new FormData();
       for (let i = 0; i < selectedFiles.length; i++) {
@@ -61,9 +65,17 @@ export default function AskAnythingBar(props: chatInput) {
         formData
       );
       props.tableQuery?.(response);
+      props.loader?.({
+        loader: false,
+        text: "",
+      });
       return response;
     } catch (error: any) {
       console.error("POST request failed:", error);
+      props.loader?.({
+        loader: false,
+        text: "",
+      });
       throw error;
     }
   }
@@ -78,7 +90,6 @@ export default function AskAnythingBar(props: chatInput) {
     console.log(input);
     if (input) {
       ctx?.setData(true);
-
       props.userQuery?.(input);
     }
   };

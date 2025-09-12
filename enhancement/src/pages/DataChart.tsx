@@ -3,6 +3,7 @@ import AskAnythingBar from "../components/AskAnythingBar";
 import { IsData } from "../shared/IsDataContext";
 import {
   inputQuery,
+  loaderContainer,
   outputData,
   queryOutPut,
   table,
@@ -21,8 +22,8 @@ interface property {
 export function DataChart(props: property) {
   const ctx = useContext(IsData);
   const [outPutCard, setCardData] = useState<outputData[]>([]);
-  const [loader, setLoader] = useState<boolean>(false);
-
+  const [loader, setLoader] = useState<loaderContainer>();
+  const [loaderText, setLoaderText] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -49,6 +50,10 @@ export function DataChart(props: property) {
       flag: false,
       content: queryText,
     };
+    let loaderInfo = {
+      loader: false,
+      text: "",
+    };
     setCardData((prev) => [...prev, userQuery]);
     let request = {
       context: "",
@@ -56,25 +61,38 @@ export function DataChart(props: property) {
       chart_type: "",
       selected_llm_model: "",
     };
+
     if (queryText != "") {
-      const response: any = await axiosInstance.post(
-        "/getdata_from_duckdb_muulti_context",
-        request
-      );
-      if (await response) {
-        const chatIntex = Object.keys(response).findIndex(
-          (item) => item === "sql"
+      setLoader({
+        loader: true,
+        text: "Generating the Query",
+      });
+      try {
+        const response: any = await axiosInstance.post(
+          "/getdata_from_duckdb_muulti_context",
+          request
         );
-        if (chatIntex != -1) {
-          const responseQuery = {
-            flag: true,
-            content: response?.sql,
-            table_html: response.table_html,
-          };
-          setCardData((prev) => [...prev, responseQuery]);
-        } else {
-          showError("something is wrong");
+        if (await response) {
+          const chatIntex = Object.keys(response).findIndex(
+            (item) => item === "sql"
+          );
+          if (chatIntex != -1) {
+            const responseQuery = {
+              flag: true,
+              content: response?.sql,
+              table_html: response.table_html,
+            };
+            setCardData((prev) => [...prev, responseQuery]);
+            setLoader({ ...loaderInfo });
+          } else {
+            showError("something is wrong");
+            setLoader(loaderInfo);
+          }
         }
+      } catch (error: any) {
+        showError(" DuckDB: Binder Error");
+      } finally {
+        setLoader(loaderInfo);
       }
     }
   }
@@ -98,13 +116,15 @@ export function DataChart(props: property) {
         setCardData((prev) => [...prev, query]);
       }
     } else {
-      showError("parsing failed try again");
+      showError("Parsing failed try again");
     }
   }
-
+  function handleLoader(loader: loaderContainer) {
+    setLoader(loader);
+  }
   useEffect(() => {
-    console.log(outPutCard);
-  }, [outPutCard]);
+    console.log("loaderText", loaderText);
+  }, [loaderText]);
 
   return (
     <>
@@ -119,7 +139,6 @@ export function DataChart(props: property) {
                 {table && <SchemaTable schema={table} />}
               </div>
               <OutputCard data={outPutCard} />
-              {loader && <StringLoader />}
             </>
           )}
         </div>
@@ -128,11 +147,13 @@ export function DataChart(props: property) {
             isExpand && isHideHeaderPrompt ? "isExpand" : "isNotExpand"
           }`}
         >
+          {loader?.loader && <StringLoader text={loader?.text} />}
           <AskAnythingBar
             property={getFileAndQuery}
             tableStructure={getTable}
             userQuery={handleUserQuery}
             tableQuery={handleTableQuery}
+            loader={handleLoader}
           />
         </div>
       </div>

@@ -19,6 +19,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     if (error?.response?.status == 500) {
       console.log("Internal error");
+      throw error;
     }
   }
 );

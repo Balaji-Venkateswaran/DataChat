@@ -1,7 +1,9 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
+import { Loader } from "../constant/model";
 
-export default function MessageBubble() {
+export default function MessageBubble(props: Loader) {
+  console.log(props);
   return (
     <Box
       sx={{
@@ -9,7 +11,9 @@ export default function MessageBubble() {
         my: 1,
       }}
     >
-      <Typography variant="body1">Analyzing Doc ...</Typography>
+      <Typography variant="body1" className="loader-text loader-dots">
+        {props.text}...
+      </Typography>
     </Box>
   );
 }

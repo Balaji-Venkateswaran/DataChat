@@ -25,8 +25,12 @@ export interface chatInput {
   tableStructure: (property: any) => void;
   userQuery?: (query: any) => void;
   tableQuery?: ((tableQuery: queryOutPut) => void | undefined) | undefined;
+  loader?: (loaderContainer: loaderContainer) => void | undefined;
 }
-
+export interface loaderContainer {
+  loader: boolean;
+  text: string;
+}
 export interface queryOutPut {
   status?: number | string;
   generated_questions?: string[];
@@ -51,4 +55,7 @@ export interface ErrorSnackbarProps {
   message: string;
   onClose: () => void;
   duration?: number;
+}
+export interface Loader {
+  text: string;
 }
